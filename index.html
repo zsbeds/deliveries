@@ -17,14 +17,14 @@
 :root{
   --bg:#f4f1ea; --card:#ffffff; --ink:#1d1f22; --muted:#6b6f76; --line:#e2ddd2;
   --accent:#1f6f54; --accent-ink:#ffffff; --accent-soft:#dcefe6;
-  --warn:#b4471f; --warn-soft:#f8e3d9; --done:#8a8f96;
+  --warn:#b4471f; --warn-soft:#f8e3d9; --done:#8a8f96; --money:#8a5a00; --money-soft:#f6ead2;
   --radius:14px; --tap:48px;
 }
 @media (prefers-color-scheme: dark){
   :root{
     --bg:#16181b; --card:#212429; --ink:#eceef0; --muted:#9aa0a8; --line:#33373d;
     --accent:#3fb489; --accent-ink:#0d1a14; --accent-soft:#1f3a30;
-    --warn:#f08a62; --warn-soft:#3d261d; --done:#6c7178;
+    --warn:#f08a62; --warn-soft:#3d261d; --done:#6c7178; --money:#e8b85a; --money-soft:#3a2f1a;
   }
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -42,10 +42,11 @@ textarea{resize:vertical;min-height:70px}
 input:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
 button,.btn{font:inherit;font-weight:600;border:0;border-radius:12px;min-height:var(--tap);padding:0 16px;
   background:var(--accent-soft);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;
-  justify-content:center;gap:6px;text-decoration:none;touch-action:manipulation}
+  justify-content:center;gap:6px;text-decoration:none;touch-action:manipulation;text-align:center}
 button:active,.btn:active{transform:scale(.98)}
 .primary{background:var(--accent);color:var(--accent-ink)}
 .danger{background:var(--warn-soft);color:var(--warn)}
+.money{background:var(--money-soft);color:var(--money)}
 .ghost{background:transparent;border:1px solid var(--line)}
 .wide{width:100%}
 .row{display:flex;gap:8px;align-items:center}
@@ -59,23 +60,33 @@ button:active,.btn:active{transform:scale(.98)}
 .chip small{font-weight:500;font-size:12px;color:var(--muted)}
 .chip.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 .chip.on small{color:inherit;opacity:.85}
-.item-row{display:grid;grid-template-columns:1fr auto 40px;gap:8px;align-items:center;margin-bottom:8px}
+.seg{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.seg .chip{padding:0 4px}
+.item{border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:10px}
+.item:last-of-type{border-bottom:0}
+.item-line2{display:grid;grid-template-columns:110px 1fr 40px;gap:8px;align-items:center;margin-top:8px}
+.price-wrap{position:relative}
+.price-wrap span{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+.price-wrap input{padding-left:24px}
 .stepper{display:flex;align-items:center;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--bg)}
-.stepper button{min-width:46px;border-radius:0;background:transparent;font-size:22px;padding:0}
-.stepper input{width:44px;min-height:46px;text-align:center;border:0;padding:0;background:transparent;font-weight:700}
+.stepper button{flex:1;min-width:44px;border-radius:0;background:transparent;font-size:22px;padding:0}
+.stepper input{width:46px;flex:0 0 46px;min-height:46px;text-align:center;border:0;padding:0;background:transparent;font-weight:700}
 .stepper input:focus{box-shadow:none}
 .x{min-width:40px;padding:0;background:transparent;color:var(--muted);font-size:22px}
 .suggest{position:relative}
 .sugg-list{position:absolute;left:0;right:0;top:100%;z-index:20;background:var(--card);border:1px solid var(--line);
   border-radius:12px;margin-top:4px;box-shadow:0 8px 24px rgba(0,0,0,.15);overflow:hidden;max-height:260px;overflow-y:auto}
-.sugg-list div{padding:12px 14px;border-bottom:1px solid var(--line);cursor:pointer}
-.sugg-list div:last-child{border-bottom:0}
-.sugg-list div:active{background:var(--accent-soft)}
+.sugg-list > div{padding:10px 14px;border-bottom:1px solid var(--line);cursor:pointer}
+.sugg-list > div:last-child{border-bottom:0}
+.sugg-list > div:active{background:var(--accent-soft)}
 .sugg-list .sub{font-size:13px;color:var(--muted)}
-.total-line{display:flex;justify-content:space-between;margin-top:6px;color:var(--muted);font-size:15px}
+.total-line{display:flex;justify-content:space-between;align-items:baseline;margin-top:6px;font-size:15px}
+.total-line strong{font-size:20px}
+.pc-status{font-size:14px;margin:6px 2px 0;min-height:1em}
+.pc-status.ok{color:var(--accent)} .pc-status.bad{color:var(--warn)}
 nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--card);border-top:1px solid var(--line);
   display:flex;padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
-nav.tabs button{flex:1;flex-direction:column;gap:2px;background:transparent;font-size:12px;color:var(--muted);min-height:54px;font-weight:600}
+nav.tabs button{flex:1;flex-direction:column;gap:2px;background:transparent;font-size:12px;color:var(--muted);min-height:54px;font-weight:600;padding:0 2px}
 nav.tabs button svg{width:26px;height:26px}
 nav.tabs button.on{color:var(--accent)}
 .load-item{display:flex;align-items:center;gap:12px;padding:10px 4px;border-bottom:1px solid var(--line);cursor:pointer;min-height:var(--tap)}
@@ -84,28 +95,45 @@ nav.tabs button.on{color:var(--accent)}
 .tick{width:30px;height:30px;border-radius:50%;border:2px solid var(--line);flex:0 0 auto;display:flex;align-items:center;justify-content:center}
 .load-item.done .tick,.text-row.done .tick{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .load-item.done .name,.load-item.done .qty{color:var(--done);text-decoration:line-through}
-.stop{position:relative}
-.stop.delivered{opacity:.6}
+.stop.delivered{opacity:.62}
+.stop-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
 .stop h3{margin:0 0 2px;font-size:19px}
+.stop .num{display:inline-flex;width:26px;height:26px;border-radius:50%;background:var(--accent-soft);color:var(--accent);
+  font-size:14px;font-weight:800;align-items:center;justify-content:center;margin-right:6px;vertical-align:2px}
 .stop .addr{margin:2px 0 8px}
-.stop ul{margin:6px 0 10px;padding-left:20px}
-.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px}
-.actions .btn,.actions button{padding:0 8px;font-size:15px}
-.badge{display:inline-block;font-size:12px;font-weight:700;padding:3px 8px;border-radius:20px;background:var(--accent-soft);color:var(--accent);vertical-align:middle}
+.stop ul{margin:6px 0 8px;padding-left:20px}
+.edit-link{min-height:36px;padding:0 12px;font-size:14px}
+.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.actions .btn,.actions button{padding:0 6px;font-size:15px}
+.badge{display:inline-block;font-size:12px;font-weight:700;padding:3px 8px;border-radius:20px;background:var(--accent-soft);color:var(--accent);vertical-align:middle;margin-left:4px}
+.badge.owe{background:var(--money-soft);color:var(--money)}
+.amount{font-weight:700;margin:0 0 4px}
+.amount.owe{color:var(--money)}
 .text-row{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--line)}
-.text-row:last-child{border-bottom:0}
+.text-row:last-of-type{border-bottom:0}
 .text-row .who{flex:1}
 .text-row.done .who{color:var(--done)}
 .banner{background:var(--warn-soft);color:var(--warn);border-radius:12px;padding:12px 14px;margin-bottom:12px;font-size:15px}
 .empty{text-align:center;color:var(--muted);padding:28px 10px}
+.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:4px}
+.summary div{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center}
+.summary strong{display:block;font-size:20px;font-variant-numeric:tabular-nums}
+.summary span{font-size:12px;color:var(--muted);font-weight:600}
+.summary .owe strong{color:var(--money)}
+.reorder{display:flex;flex-direction:column;gap:6px}
+.reorder button{min-height:44px;min-width:56px;font-size:20px;padding:0}
+.result{display:block;width:100%;text-align:left;justify-content:flex-start;background:var(--card);border:1px solid var(--line);
+  border-radius:12px;padding:12px 14px;margin-bottom:8px;font-weight:400;flex-direction:column;align-items:stretch}
+.result .top{display:flex;justify-content:space-between;gap:8px;font-weight:700}
 .toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);
-  background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:24px;font-weight:600;opacity:0;transition:.25s;z-index:50;
+  background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:24px;font-weight:600;opacity:0;transition:.25s;z-index:80;
   max-width:90vw;text-align:center;pointer-events:none}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .sheet-bg{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:60;display:flex;align-items:flex-end;justify-content:center}
-.sheet{background:var(--card);width:100%;max-width:640px;border-radius:18px 18px 0 0;padding:20px 16px calc(16px + env(safe-area-inset-bottom))}
-.sheet p{margin:0 0 16px}
-.prod-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line)}
+.sheet{background:var(--card);width:100%;max-width:640px;border-radius:18px 18px 0 0;padding:20px 16px calc(16px + env(safe-area-inset-bottom));max-height:85vh;overflow-y:auto}
+.sheet p{margin:0 0 14px}
+.sheet .opts{display:grid;gap:10px}
+.prod-row{display:grid;grid-template-columns:1fr 100px 40px;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--line)}
 .prod-row:last-child{border-bottom:0}
 .hidden{display:none !important}
 .editing-bar{background:var(--accent-soft);border-radius:12px;padding:10px 14px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:8px}
@@ -115,29 +143,44 @@ nav.tabs button.on{color:var(--accent)}
 <main id="app"></main>
 
 <nav class="tabs" id="tabs">
-  <button data-tab="new" aria-label="New order">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>New order</button>
-  <button data-tab="deliveries" aria-label="Deliveries">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg>Deliveries</button>
-  <button data-tab="settings" aria-label="Settings">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg>Settings</button>
+  <button data-tab="new">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>New order</button>
+  <button data-tab="deliveries">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg>Deliveries</button>
+  <button data-tab="orders">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>Orders</button>
+  <button data-tab="settings">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg>Settings</button>
 </nav>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
 "use strict";
-/* ---------- Storage (all data stays in this phone's browser) ---------- */
+/* ============ Storage: everything stays in this phone's browser ============ */
 const KEY = "delivery-logger-v1";
 const DEFAULT_MSG = "Hi {name}, I'm out for delivery today and will be with you soon. Thanks, {business}";
+const DEFAULT_REMIND = "Hi {name}, just a reminder that your order will be delivered on {date}. Please let me know if you won't be in. Thanks, {business}";
 let storageOK = true;
-function blank(){ return {v:1, orders:[], products:[], settings:{business:"", message:DEFAULT_MSG, via:"whatsapp"}, loaded:{}, texted:{}, lastBackup:null}; }
+function blankSettings(){ return {business:"", message:DEFAULT_MSG, reminder:DEFAULT_REMIND, via:"whatsapp"}; }
+function blank(){ return {v:2, orders:[], products:[], prices:{}, settings:blankSettings(), loaded:{}, sent:{}, routes:{}, lastBackup:null}; }
+function upgrade(d){
+  const b = blank();
+  d = Object.assign(b, d);
+  d.settings = Object.assign(blankSettings(), d.settings || {});
+  d.prices = d.prices || {}; d.sent = d.sent || {}; d.routes = d.routes || {}; d.loaded = d.loaded || {};
+  d.orders.forEach(o => {
+    o.items = (o.items || []).map(i => ({name:i.name, qty:i.qty||0, price:i.price||0}));
+    if(o.paid === undefined) o.paid = false;
+    if(!o.payMethod) o.payMethod = o.paid ? "cash" : "none";
+  });
+  delete d.texted;
+  d.v = 2;
+  return d;
+}
 function load(){
   try{
     const raw = localStorage.getItem(KEY);
-    if(!raw) return blank();
-    const d = Object.assign(blank(), JSON.parse(raw));
-    d.settings = Object.assign(blank().settings, d.settings);
-    return d;
+    return raw ? upgrade(JSON.parse(raw)) : blank();
   }catch(e){ storageOK = false; return blank(); }
 }
 let db = load();
@@ -147,7 +190,7 @@ function save(){
 }
 try{ navigator.storage && navigator.storage.persist && navigator.storage.persist(); }catch(e){}
 
-/* ---------- Helpers ---------- */
+/* ============ Helpers ============ */
 const $ = (s, el=document) => el.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
@@ -163,118 +206,191 @@ function niceDate(s, long){
   if(s === addDays(t,1)) return "Tomorrow · " + base;
   return base;
 }
+const shortDay = d => d===today() ? "Today" : d===addDays(today(),1) ? "Tomorrow" : fromIso(d).toLocaleDateString("en-GB",{weekday:"short"});
+const dayMonth = d => fromIso(d).toLocaleDateString("en-GB",{day:"numeric", month:"short"});
 const cleanPhone = p => String(p||"").replace(/[^\d+]/g, "");
 const normPostcode = p => String(p||"").toUpperCase().replace(/\s+/g," ").trim();
+const money = p => "£" + (Math.round(p||0)/100).toFixed(2);
+function toPence(v){
+  const n = parseFloat(String(v||"").replace(/[£,\s]/g,""));
+  return isFinite(n) && n > 0 ? Math.round(n*100) : 0;
+}
+const penceInput = p => p ? (p/100).toFixed(2) : "";
+const orderTotal = o => o.items.reduce((s,i)=>s + (i.qty||0)*(i.price||0), 0);
+const owes = o => !o.paid && orderTotal(o) > 0;
+const PAY = {none:"Not paid", cash:"Cash", card:"Card", transfer:"Transfer"};
+const fullAddress = o => [o.address, o.postcode].filter(Boolean).join(", ").replace(/\n/g, ", ");
+
 function toast(msg){
   const t = $("#toast"); t.textContent = msg; t.classList.add("show");
   clearTimeout(toast._t); toast._t = setTimeout(()=>t.classList.remove("show"), 2200);
 }
 function buzz(){ try{ navigator.vibrate && navigator.vibrate(30); }catch(e){} }
-function confirmSheet(message, okLabel, onOk, danger=true){
+function sheet(html, onClick){
   const bg = document.createElement("div");
   bg.className = "sheet-bg";
-  bg.innerHTML = `<div class="sheet" role="dialog" aria-modal="true"><p>${esc(message)}</p>
-    <div class="row"><button class="ghost" data-a="no">Cancel</button><button class="${danger?"danger":"primary"}" data-a="yes">${esc(okLabel)}</button></div></div>`;
+  bg.innerHTML = `<div class="sheet" role="dialog" aria-modal="true">${html}</div>`;
+  const close = () => bg.remove();
   bg.addEventListener("click", e => {
-    const a = e.target.dataset.a;
-    if(e.target === bg || a === "no") bg.remove();
-    if(a === "yes"){ bg.remove(); onOk(); }
+    if(e.target === bg || e.target.closest("[data-close]")) return close();
+    onClick && onClick(e, close, bg);
   });
   document.body.appendChild(bg);
+  return bg;
+}
+function confirmSheet(message, okLabel, onOk){
+  sheet(`<p>${esc(message)}</p><div class="row"><button class="ghost" data-close>Cancel</button><button class="danger" data-yes>${esc(okLabel)}</button></div>`,
+    (e, close) => { if(e.target.closest("[data-yes]")){ close(); onOk(); } });
+}
+function choiceSheet(message, options, onPick){
+  sheet(`<p>${esc(message)}</p><div class="opts">${options.map(o => `<button class="${o.cls||"ghost"}" data-v="${esc(o.value)}">${esc(o.label)}</button>`).join("")}
+    <button class="ghost" data-close>Cancel</button></div>`,
+    (e, close) => { const b = e.target.closest("[data-v]"); if(b){ close(); onPick(b.dataset.v); } });
 }
 
-/* ---------- Catalogue: grows automatically from orders ---------- */
+/* ============ Catalogue & prices: learned from orders ============ */
 function canonicalProduct(name){
-  const n = name.trim().replace(/\s+/g," ");
+  const n = String(name||"").trim().replace(/\s+/g," ");
   if(!n) return "";
-  const hit = db.products.find(p => p.toLowerCase() === n.toLowerCase());
-  return hit || n;
+  return db.products.find(p => p.toLowerCase() === n.toLowerCase()) || n;
 }
 function learnProducts(items){
   items.forEach(it => {
     if(!db.products.some(p => p.toLowerCase() === it.name.toLowerCase())) db.products.push(it.name);
+    if(it.price > 0) db.prices[it.name] = it.price;
   });
   db.products.sort((a,b)=>a.localeCompare(b));
 }
+const priceOf = name => db.prices[canonicalProduct(name)] || 0;
 
-/* ---------- Customers: remembered from past orders ---------- */
+/* ============ Customers: remembered from past orders ============ */
 function customers(){
   const map = new Map();
   [...db.orders].sort((a,b)=>a.createdAt - b.createdAt).forEach(o => {
-    const k = (cleanPhone(o.phone) || o.name.trim().toLowerCase());
-    map.set(k, {name:o.name, phone:o.phone, address:o.address, postcode:o.postcode, items:o.items, last:o.date});
+    const k = cleanPhone(o.phone) || o.name.trim().toLowerCase();
+    map.set(k, {name:o.name, phone:o.phone, address:o.address, postcode:o.postcode, items:o.items});
   });
   return [...map.values()];
 }
 
-/* ---------- Generic suggestion dropdown ---------- */
-function attachSuggest(input, getOptions, onPick){
+/* ============ Suggestion dropdown (sync or async options) ============ */
+function attachSuggest(input, getOptions, onPick, minLen=1){
   const wrap = input.parentElement;
-  let list = null;
-  function close(){ if(list){ list.remove(); list = null; } }
-  function open(){
-    close();
+  let list = null, seq = 0, timer;
+  const close = () => { if(list){ list.remove(); list = null; } };
+  async function open(){
     const q = input.value.trim().toLowerCase();
-    if(!q) return;
-    const opts = getOptions(q).slice(0,6);
+    const my = ++seq;
+    if(q.length < minLen){ close(); return; }
+    let opts = getOptions(q);
+    if(opts && opts.then){ try{ opts = await opts; }catch(e){ opts = []; } }
+    if(my !== seq || document.activeElement !== input) return;
+    close();
+    opts = (opts||[]).slice(0,6);
     if(!opts.length) return;
     list = document.createElement("div");
     list.className = "sugg-list";
     opts.forEach(o => {
       const d = document.createElement("div");
       d.innerHTML = `<div>${esc(o.label)}</div>${o.sub ? `<div class="sub">${esc(o.sub)}</div>` : ""}`;
-      d.style.padding = "10px 14px";
       d.addEventListener("pointerdown", e => { e.preventDefault(); close(); onPick(o); });
       list.appendChild(d);
     });
     wrap.appendChild(list);
   }
-  input.addEventListener("input", open);
+  input.addEventListener("input", () => { clearTimeout(timer); timer = setTimeout(open, 120); });
   input.addEventListener("focus", open);
   input.addEventListener("blur", () => setTimeout(close, 150));
 }
 
-/* ---------- App state ---------- */
+/* ============ Postcode check (free postcodes.io – only the postcode is sent) ============ */
+const pcCache = new Map();
+async function pcFetch(path){
+  const ctl = new AbortController(); const t = setTimeout(()=>ctl.abort(), 5000);
+  try{
+    const r = await fetch("https://api.postcodes.io/postcodes/" + path, {signal:ctl.signal});
+    return await r.json();
+  }finally{ clearTimeout(t); }
+}
+async function pcAutocomplete(q){
+  const k = "ac:" + q;
+  if(!pcCache.has(k)){
+    const j = await pcFetch(encodeURIComponent(q) + "/autocomplete?limit=6");
+    pcCache.set(k, (j && j.result) || []);
+  }
+  return pcCache.get(k);
+}
+async function pcLookup(pc){
+  const k = "pc:" + pc.replace(/\s/g,"");
+  if(!pcCache.has(k)){
+    const j = await pcFetch(encodeURIComponent(pc.replace(/\s/g,"")));
+    pcCache.set(k, j && j.status === 200 ? j.result : null);
+  }
+  return pcCache.get(k);
+}
+async function checkPostcode(){
+  const el = $("#pc-status"); if(!el) return;
+  const pc = form.postcode;
+  el.className = "pc-status"; el.textContent = "";
+  if(pc.replace(/\s/g,"").length < 5) return;
+  try{
+    const r = await pcLookup(pc);
+    if(form.postcode !== pc || !$("#pc-status")) return;
+    if(r){
+      el.className = "pc-status ok";
+      el.textContent = "✓ " + [r.admin_ward, r.admin_district].filter(Boolean).join(", ");
+      if(r.postcode && r.postcode !== form.postcode){ form.postcode = r.postcode; $("#f-postcode").value = r.postcode; }
+    }else{
+      el.className = "pc-status bad";
+      el.textContent = "⚠ Postcode not found – please check it";
+    }
+  }catch(e){ /* offline – no check, no problem */ }
+}
+
+/* ============ App state ============ */
 let tab = "new";
 let viewDate = today();
-let form = null;        // order being typed
-let editingId = null;   // id when editing an existing order
-let textMode = false;   // "out for delivery" texting panel open
+let form = null;
+let editingId = null;
+let msgMode = null;      // null | "remind" | "onway"
+let reorderMode = false;
+let ordersFilter = "upcoming";
+let ordersQuery = "";
 
 function emptyForm(){
-  return {name:"", phone:"", address:"", postcode:"", date:nextDefaultDate(), items:[{name:"", qty:1}], notes:"", lastItems:null};
+  return {name:"", phone:"", address:"", postcode:"", date:addDays(today(),1), items:[{name:"", qty:1, price:0}], notes:"", payMethod:"none", lastItems:null};
 }
-function nextDefaultDate(){ return addDays(today(), 1); }
-
 function setTab(t){
   tab = t;
   document.querySelectorAll("#tabs button").forEach(b => b.classList.toggle("on", b.dataset.tab === t));
-  render();
-  window.scrollTo(0,0);
+  render(); window.scrollTo(0,0);
 }
-document.querySelectorAll("#tabs button").forEach(b => b.addEventListener("click", () => setTab(b.dataset.tab)));
-
+document.querySelectorAll("#tabs button").forEach(b => b.addEventListener("click", () => {
+  if(b.dataset.tab !== "deliveries"){ msgMode = null; reorderMode = false; }
+  setTab(b.dataset.tab);
+}));
 function render(){
-  if(tab === "new") renderNew();
-  else if(tab === "deliveries") renderDeliveries();
-  else renderSettings();
+  ({new:renderNew, deliveries:renderDeliveries, orders:renderOrders, settings:renderSettings})[tab]();
 }
-function storageBanner(){
-  return storageOK ? "" : `<div class="banner">This browser isn't letting the app save. Orders will be lost when you close it. Open the app from Safari (not a private tab).</div>`;
+const storageBanner = () => storageOK ? "" :
+  `<div class="banner">This browser isn't letting the app save. Open it from the Home Screen icon (not a private Safari tab).</div>`;
+function startEdit(id){
+  const o = db.orders.find(o => o.id === id);
+  editingId = o.id;
+  form = {name:o.name, phone:o.phone, address:o.address, postcode:o.postcode, date:o.date,
+          items:o.items.map(i=>({...i})), notes:o.notes||"", payMethod:o.paid ? (o.payMethod||"cash") : "none", lastItems:null};
+  setTab("new");
 }
 
 /* ================= NEW ORDER ================= */
 function renderNew(){
   if(!form) form = emptyForm();
-  const app = $("#app");
-  const dateChips = [];
+  const chips = [];
   for(let i=0;i<8;i++){
     const d = addDays(today(), i);
-    const lab = i===0 ? "Today" : i===1 ? "Tomorrow" : fromIso(d).toLocaleDateString("en-GB",{weekday:"short"});
-    const sub = fromIso(d).toLocaleDateString("en-GB",{day:"numeric", month:"short"});
-    dateChips.push(`<button type="button" class="chip ${form.date===d?"on":""}" data-date="${d}">${lab}<small>${sub}</small></button>`);
+    chips.push(`<button type="button" class="chip ${form.date===d?"on":""}" data-date="${d}">${shortDay(d)}<small>${dayMonth(d)}</small></button>`);
   }
-  app.innerHTML = `
+  $("#app").innerHTML = `
     ${storageBanner()}
     <h1>${editingId ? "Edit order" : "New order"}</h1>
     ${editingId ? `<div class="editing-bar"><span class="small">Changing an existing order</span><button type="button" class="ghost" id="cancelEdit" style="min-height:40px">Cancel</button></div>` : ""}
@@ -284,22 +400,28 @@ function renderNew(){
         <div class="suggest"><input id="f-name" value="${esc(form.name)}" autocapitalize="words" placeholder="Start typing – regulars pop up"></div>
         <label for="f-phone">Phone</label>
         <input id="f-phone" type="tel" inputmode="tel" value="${esc(form.phone)}" placeholder="07…">
+        <label for="f-postcode">Postcode</label>
+        <div class="suggest"><input id="f-postcode" value="${esc(form.postcode)}" autocapitalize="characters" placeholder="e.g. B12 9AB"></div>
+        <div class="pc-status" id="pc-status" aria-live="polite"></div>
         <label for="f-address">Address</label>
         <textarea id="f-address" rows="2" autocapitalize="words" placeholder="House number and street">${esc(form.address)}</textarea>
-        <label for="f-postcode">Postcode</label>
-        <input id="f-postcode" value="${esc(form.postcode)}" autocapitalize="characters" placeholder="e.g. B12 9AB">
       </div>
 
       <h2>Delivery date</h2>
-      <div class="chips" id="dateChips">${dateChips.join("")}</div>
-      <div class="row" style="margin-top:4px"><input type="date" id="f-date" value="${form.date}" aria-label="Pick another date"></div>
+      <div class="chips" id="dateChips">${chips.join("")}</div>
+      <input type="date" id="f-date" value="${form.date}" aria-label="Pick another date" style="margin-top:4px">
 
       <h2>Products</h2>
       <div class="card">
         ${form.lastItems ? `<button type="button" class="ghost wide" id="sameAsLast" style="margin-bottom:12px">↻ Same as last time (${esc(form.lastItems.map(i=>i.qty+"× "+i.name).join(", "))})</button>` : ""}
         <div id="items"></div>
         <button type="button" class="ghost wide" id="addItem">+ Add another product</button>
-        <div class="total-line"><span>Items</span><strong id="itemCount"></strong></div>
+        <div class="total-line"><span class="muted"><span id="itemCount"></span> items</span><strong id="orderTotal"></strong></div>
+      </div>
+
+      <h2>Payment</h2>
+      <div class="seg" id="payChips">
+        ${Object.entries(PAY).map(([k,v]) => `<button type="button" class="chip ${form.payMethod===k?"on":""}" data-pay="${k}">${v}</button>`).join("")}
       </div>
 
       <label for="f-notes">Notes (optional)</label>
@@ -310,34 +432,39 @@ function renderNew(){
         ${editingId ? `<button type="button" class="danger wide" id="deleteOrder">Delete this order</button>` : ""}
       </div>
     </form>`;
-
   renderItems();
 
-  // field bindings
-  const bind = (id, key, fn) => $(id).addEventListener("input", e => { form[key] = fn ? fn(e.target.value) : e.target.value; });
-  bind("#f-name","name"); bind("#f-phone","phone"); bind("#f-address","address"); bind("#f-postcode","postcode"); bind("#f-notes","notes");
-  $("#f-postcode").addEventListener("blur", e => { form.postcode = normPostcode(e.target.value); e.target.value = form.postcode; });
+  const bind = (id, key) => $(id).addEventListener("input", e => { form[key] = e.target.value; });
+  bind("#f-name","name"); bind("#f-phone","phone"); bind("#f-address","address"); bind("#f-notes","notes");
+  const pcIn = $("#f-postcode");
+  pcIn.addEventListener("input", e => { form.postcode = e.target.value; $("#pc-status").textContent = ""; });
+  pcIn.addEventListener("blur", () => { form.postcode = normPostcode(pcIn.value); pcIn.value = form.postcode; checkPostcode(); });
+  attachSuggest(pcIn, q => pcAutocomplete(q.replace(/\s/g,"")).then(r => r.map(p => ({label:p}))),
+    o => { form.postcode = o.label; pcIn.value = o.label; checkPostcode(); $("#f-address").focus(); }, 3);
+  if(form.postcode) checkPostcode();
+
   $("#f-date").addEventListener("change", e => { if(e.target.value){ form.date = e.target.value; renderNew(); } });
-  $("#dateChips").addEventListener("click", e => {
-    const b = e.target.closest("[data-date]"); if(!b) return;
-    form.date = b.dataset.date; renderNew();
+  $("#dateChips").addEventListener("click", e => { const b = e.target.closest("[data-date]"); if(b){ form.date = b.dataset.date; renderNew(); } });
+  $("#payChips").addEventListener("click", e => {
+    const b = e.target.closest("[data-pay]"); if(!b) return;
+    form.payMethod = b.dataset.pay;
+    document.querySelectorAll("#payChips .chip").forEach(c => c.classList.toggle("on", c === b));
   });
 
   attachSuggest($("#f-name"), q => customers()
-      .filter(c => c.name.toLowerCase().includes(q) || cleanPhone(c.phone).includes(q.replace(/\s/g,"")))
+      .filter(c => c.name.toLowerCase().includes(q) || (q.replace(/\s/g,"").length > 3 && cleanPhone(c.phone).includes(q.replace(/\s/g,""))))
       .map(c => ({label:c.name, sub:[c.address, c.postcode].filter(Boolean).join(", "), c})),
-    o => {
-      const c = o.c;
-      Object.assign(form, {name:c.name, phone:c.phone, address:c.address, postcode:c.postcode, lastItems:c.items});
-      renderNew();
-    });
+    o => { const c = o.c; Object.assign(form, {name:c.name, phone:c.phone, address:c.address, postcode:c.postcode, lastItems:c.items}); renderNew(); });
 
   $("#addItem").addEventListener("click", () => {
-    form.items.push({name:"", qty:1}); renderItems();
-    const inputs = document.querySelectorAll(".item-name"); inputs[inputs.length-1].focus();
+    form.items.push({name:"", qty:1, price:0}); renderItems();
+    const ins = document.querySelectorAll(".item-name"); ins[ins.length-1].focus();
   });
   const same = $("#sameAsLast");
-  if(same) same.addEventListener("click", () => { form.items = form.lastItems.map(i => ({...i})); renderItems(); toast("Products copied from last order"); });
+  if(same) same.addEventListener("click", () => {
+    form.items = form.lastItems.map(i => ({name:i.name, qty:i.qty, price: priceOf(i.name) || i.price || 0}));
+    renderItems(); toast("Products copied from last order");
+  });
   const ce = $("#cancelEdit");
   if(ce) ce.addEventListener("click", () => { editingId = null; form = emptyForm(); setTab("deliveries"); });
   const del = $("#deleteOrder");
@@ -351,56 +478,65 @@ function renderNew(){
 function renderItems(){
   const box = $("#items");
   box.innerHTML = form.items.map((it, i) => `
-    <div class="item-row" data-i="${i}">
+    <div class="item" data-i="${i}">
       <div class="suggest"><input class="item-name" value="${esc(it.name)}" placeholder="Product" aria-label="Product ${i+1}" autocapitalize="sentences"></div>
-      <div class="stepper">
-        <button type="button" data-step="-1" aria-label="One fewer">−</button>
-        <input class="item-qty" type="number" inputmode="numeric" min="1" value="${it.qty}" aria-label="Quantity">
-        <button type="button" data-step="1" aria-label="One more">+</button>
+      <div class="item-line2">
+        <div class="price-wrap"><span>£</span><input class="item-price" inputmode="decimal" value="${penceInput(it.price)}" placeholder="price" aria-label="Price each"></div>
+        <div class="stepper">
+          <button type="button" data-step="-1" aria-label="One fewer">−</button>
+          <input class="item-qty" type="number" inputmode="numeric" min="1" value="${it.qty}" aria-label="Quantity">
+          <button type="button" data-step="1" aria-label="One more">+</button>
+        </div>
+        <button type="button" class="x" data-remove aria-label="Remove product">×</button>
       </div>
-      <button type="button" class="x" data-remove aria-label="Remove product">×</button>
     </div>`).join("");
-  box.querySelectorAll(".item-row").forEach(row => {
+  box.querySelectorAll(".item").forEach(row => {
     const i = +row.dataset.i;
-    const nameIn = $(".item-name", row), qtyIn = $(".item-qty", row);
+    const nameIn = $(".item-name", row), qtyIn = $(".item-qty", row), priceIn = $(".item-price", row);
+    const fillPrice = () => { if(!form.items[i].price){ const p = priceOf(form.items[i].name); if(p){ form.items[i].price = p; priceIn.value = penceInput(p); updateTotals(); } } };
     nameIn.addEventListener("input", () => { form.items[i].name = nameIn.value; });
-    qtyIn.addEventListener("input", () => { form.items[i].qty = Math.max(0, parseInt(qtyIn.value,10) || 0); updateCount(); });
+    nameIn.addEventListener("blur", fillPrice);
+    priceIn.addEventListener("input", () => { form.items[i].price = toPence(priceIn.value); updateTotals(); });
+    priceIn.addEventListener("blur", () => { priceIn.value = penceInput(form.items[i].price); });
+    qtyIn.addEventListener("input", () => { form.items[i].qty = Math.max(0, parseInt(qtyIn.value,10) || 0); updateTotals(); });
     row.querySelectorAll("[data-step]").forEach(b => b.addEventListener("click", () => {
       form.items[i].qty = Math.max(1, (form.items[i].qty||0) + +b.dataset.step);
-      qtyIn.value = form.items[i].qty; updateCount();
+      qtyIn.value = form.items[i].qty; updateTotals();
     }));
     $("[data-remove]", row).addEventListener("click", () => {
-      form.items.splice(i,1); if(!form.items.length) form.items.push({name:"", qty:1}); renderItems();
+      form.items.splice(i,1); if(!form.items.length) form.items.push({name:"", qty:1, price:0}); renderItems();
     });
     attachSuggest(nameIn,
-      q => db.products.filter(p => p.toLowerCase().includes(q) && p.toLowerCase() !== q).map(p => ({label:p})),
-      o => { form.items[i].name = o.label; nameIn.value = o.label; qtyIn.focus(); qtyIn.select(); });
+      q => db.products.filter(p => p.toLowerCase().includes(q) && p.toLowerCase() !== q)
+             .map(p => ({label:p, sub: db.prices[p] ? money(db.prices[p]) + " each" : ""})),
+      o => { form.items[i].name = o.label; nameIn.value = o.label; form.items[i].price = 0; fillPrice(); qtyIn.focus(); qtyIn.select(); });
   });
-  updateCount();
+  updateTotals();
 }
-function updateCount(){
-  const n = form.items.filter(i => i.name.trim()).reduce((s,i)=>s+(i.qty||0),0);
-  const el = $("#itemCount"); if(el) el.textContent = n;
+function updateTotals(){
+  const live = form.items.filter(i => i.name.trim());
+  const n = live.reduce((s,i)=>s+(i.qty||0),0);
+  const t = live.reduce((s,i)=>s+(i.qty||0)*(i.price||0),0);
+  if($("#itemCount")) $("#itemCount").textContent = n;
+  if($("#orderTotal")) $("#orderTotal").textContent = t ? money(t) : "";
 }
 
 function saveOrder(){
   const name = form.name.trim();
-  const items = form.items
-    .map(i => ({name: canonicalProduct(i.name), qty: parseInt(i.qty,10) || 0}))
-    .filter(i => i.name && i.qty > 0);
-  // merge duplicate product lines
   const merged = [];
-  items.forEach(i => { const m = merged.find(x => x.name === i.name); m ? m.qty += i.qty : merged.push({...i}); });
+  form.items.map(i => ({name: canonicalProduct(i.name), qty: parseInt(i.qty,10) || 0, price: i.price || 0}))
+    .filter(i => i.name && i.qty > 0)
+    .forEach(i => { const m = merged.find(x => x.name === i.name && x.price === i.price); m ? m.qty += i.qty : merged.push(i); });
   if(!name){ toast("Add the customer's name"); $("#f-name").focus(); return; }
   if(!merged.length){ toast("Add at least one product"); return; }
   if(!form.date){ toast("Pick a delivery date"); return; }
 
   learnProducts(merged);
+  const paid = form.payMethod !== "none";
   const data = {name, phone:form.phone.trim(), address:form.address.trim(), postcode:normPostcode(form.postcode),
-    date:form.date, items:merged, notes:form.notes.trim()};
+    date:form.date, items:merged, notes:form.notes.trim(), paid, payMethod: form.payMethod};
   if(editingId){
-    const o = db.orders.find(o => o.id === editingId);
-    Object.assign(o, data);
+    Object.assign(db.orders.find(o => o.id === editingId), data);
     toast(`Updated – ${name}`);
   }else{
     db.orders.push({id:uid(), ...data, delivered:false, createdAt:Date.now()});
@@ -412,162 +548,278 @@ function saveOrder(){
   if(wasEditing){ viewDate = data.date; setTab("deliveries"); } else { renderNew(); window.scrollTo(0,0); }
 }
 
-/* ================= DELIVERIES ================= */
-function ordersOn(d){
-  return db.orders.filter(o => o.date === d).sort((a,b) =>
-    (a.postcode||"").localeCompare(b.postcode||"") || a.name.localeCompare(b.name));
-}
-function messageFor(o){
-  return (db.settings.message || DEFAULT_MSG)
-    .replaceAll("{name}", o.name.split(" ")[0])
-    .replaceAll("{business}", db.settings.business || "")
-    .replace(/,\s*$/, "").trim();
-}
+/* ================= MESSAGES ================= */
+const useWA = () => db.settings.via !== "sms";
+const msgApp = () => useWA() ? "WhatsApp" : "Text";
+const msgTarget = () => useWA() ? 'target="_blank" rel="noopener"' : "";
 function waNumber(p){
   let n = cleanPhone(p);
   if(n.startsWith("+")) n = n.slice(1);
   else if(n.startsWith("00")) n = n.slice(2);
-  else if(n.startsWith("0")) n = "44" + n.slice(1);   // UK number like 07700 900123
+  else if(n.startsWith("0")) n = "44" + n.slice(1);
   return n.replace(/\D/g,"");
 }
-const useWA = () => db.settings.via !== "sms";
-const smsHref = (o) => useWA()
-  ? `https://wa.me/${waNumber(o.phone)}?text=${encodeURIComponent(messageFor(o))}`
-  : `sms:${cleanPhone(o.phone)}?&body=${encodeURIComponent(messageFor(o))}`;
-const msgLabel = () => useWA() ? "WhatsApp" : "Text";
-const mapsHref = (o) => `https://maps.apple.com/?q=${encodeURIComponent([o.address, o.postcode].filter(Boolean).join(", "))}`;
+function messageFor(o, kind="onway"){
+  const tpl = kind === "remind" ? (db.settings.reminder || DEFAULT_REMIND) : (db.settings.message || DEFAULT_MSG);
+  const total = orderTotal(o);
+  return tpl
+    .replaceAll("{name}", o.name.trim().split(/\s+/)[0])
+    .replaceAll("{business}", db.settings.business || "")
+    .replaceAll("{date}", fromIso(o.date).toLocaleDateString("en-GB",{weekday:"long", day:"numeric", month:"long"}))
+    .replaceAll("{total}", total && !o.paid ? money(total) : "")
+    .replace(/[ \t]+/g," ").replace(/[,\s]+$/, "").trim();
+}
+const msgHref = (o, kind) => useWA()
+  ? `https://wa.me/${waNumber(o.phone)}?text=${encodeURIComponent(messageFor(o, kind))}`
+  : `sms:${cleanPhone(o.phone)}?&body=${encodeURIComponent(messageFor(o, kind))}`;
+
+/* ================= DELIVERIES ================= */
+function ordersOn(d){
+  const route = db.routes[d] || [];
+  const pos = id => { const i = route.indexOf(id); return i < 0 ? 1e6 : i; };
+  return db.orders.filter(o => o.date === d).sort((a,b) =>
+    pos(a.id) - pos(b.id) || (a.postcode||"").localeCompare(b.postcode||"") || a.name.localeCompare(b.name));
+}
+function routeLinks(list){
+  const stops = list.filter(o => !o.delivered && (o.address || o.postcode));
+  const legs = [];
+  for(let i = 0; i < stops.length; i += 10){
+    const chunk = stops.slice(i, i+10);
+    const origin = i ? fullAddress(stops[i-1]) : "";
+    const dest = chunk[chunk.length-1];
+    const way = chunk.slice(0,-1).map(fullAddress).join("|");
+    let url = "https://www.google.com/maps/dir/?api=1&travelmode=driving&destination=" + encodeURIComponent(fullAddress(dest));
+    if(origin) url += "&origin=" + encodeURIComponent(origin);
+    if(way) url += "&waypoints=" + encodeURIComponent(way);
+    legs.push({url, from:i+1, to:i+chunk.length});
+  }
+  return legs;
+}
 
 function renderDeliveries(){
-  const app = $("#app");
   const t = today();
-  // upcoming dates that have orders, plus today
-  const dates = [...new Set([t, ...db.orders.filter(o => o.date >= t && !o.delivered || o.date === viewDate).map(o => o.date)])].sort();
-  if(!dates.includes(viewDate)) dates.push(viewDate), dates.sort();
-  const chips = dates.map(d => {
-    const n = db.orders.filter(o => o.date === d).length;
-    const lab = d===t ? "Today" : d===addDays(t,1) ? "Tomorrow" : fromIso(d).toLocaleDateString("en-GB",{weekday:"short"});
-    return `<button class="chip ${d===viewDate?"on":""}" data-date="${d}">${lab}<small>${fromIso(d).toLocaleDateString("en-GB",{day:"numeric",month:"short"})} · ${n}</small></button>`;
-  }).join("");
+  const dates = [...new Set([t, viewDate, ...db.orders.filter(o => o.date >= t && !o.delivered).map(o => o.date)])].sort();
+  const chips = dates.map(d => `<button class="chip ${d===viewDate?"on":""}" data-date="${d}">${shortDay(d)}<small>${dayMonth(d)} · ${db.orders.filter(o=>o.date===d).length}</small></button>`).join("");
 
   const list = ordersOn(viewDate);
   const loaded = db.loaded[viewDate] || {};
-  const texted = db.texted[viewDate] || {};
-  // van list
+  const sent = db.sent[viewDate] || {};
   const totals = {};
   list.forEach(o => o.items.forEach(i => totals[i.name] = (totals[i.name]||0) + i.qty));
   const prodNames = Object.keys(totals).sort((a,b)=>a.localeCompare(b));
   const loadedCount = prodNames.filter(p => loaded[p]).length;
+  const dayTotal = list.reduce((s,o)=>s+orderTotal(o),0);
+  const toCollect = list.filter(owes).reduce((s,o)=>s+orderTotal(o),0);
   const needBackup = db.orders.length >= 5 && (!db.lastBackup || Date.now() - db.lastBackup > 7*864e5);
   const withPhone = list.filter(o => cleanPhone(o.phone));
-  const sentCount = withPhone.filter(o => texted[o.id]).length;
+  const sentCount = k => withPhone.filter(o => sent[k+":"+o.id]).length;
+  const legs = routeLinks(list);
 
-  app.innerHTML = `
+  let msgPanel = "";
+  if(msgMode){
+    const kind = msgMode;
+    msgPanel = `<div class="card">
+      <p style="margin:0 0 4px;font-weight:700">${kind === "remind" ? "📅 Delivery reminders" : "🚐 On my way"}</p>
+      <p class="small muted" style="margin:0 0 8px">Tap each customer, press Send in ${useWA() ? "WhatsApp" : "Messages"}, then come back for the next one. Each customer gets their own message.</p>
+      ${withPhone.map(o => { const done = sent[kind+":"+o.id]; return `<div class="text-row ${done?"done":""}">
+        <span class="tick">${done?"✓":""}</span>
+        <span class="who">${esc(o.name)}<br><span class="small muted">${esc(o.phone)}</span></span>
+        <a class="btn ${done?"ghost":"primary"}" href="${msgHref(o, kind)}" ${msgTarget()} data-sent="${o.id}">${done?"Again":msgApp()}</a></div>`; }).join("")}
+      ${list.length > withPhone.length ? `<p class="small muted" style="margin:8px 0 0">${list.length-withPhone.length} customer(s) have no phone number.</p>` : ""}
+      <button class="ghost wide" id="endMsg" style="margin-top:10px">Done</button>
+    </div>`;
+  }
+
+  $("#app").innerHTML = `
     ${storageBanner()}
     ${needBackup ? `<div class="banner">It's been a while since your last backup. <a href="#" id="goBackup" style="color:inherit;font-weight:700">Back up now</a></div>` : ""}
     <h1>Deliveries</h1>
     <div class="chips" id="dayChips">${chips}</div>
-    <div class="row" style="margin:4px 0 6px"><input type="date" id="pickDay" value="${viewDate}" aria-label="Pick a day"></div>
+    <input type="date" id="pickDay" value="${viewDate}" aria-label="Pick a day" style="margin:4px 0 6px">
 
     ${!list.length ? `<div class="empty">No orders for ${esc(niceDate(viewDate, true))}.</div>` : `
+    <div class="summary">
+      <div><strong>${list.filter(o=>o.delivered).length}/${list.length}</strong><span>delivered</span></div>
+      <div><strong>${money(dayTotal)}</strong><span>day's total</span></div>
+      <div class="${toCollect?"owe":""}"><strong>${money(toCollect)}</strong><span>to collect</span></div>
+    </div>
+
     <h2>Load the van · ${loadedCount}/${prodNames.length}</h2>
     <div class="card" id="vanList" style="padding:4px 12px">
       ${prodNames.map(p => `<div class="load-item ${loaded[p]?"done":""}" data-p="${esc(p)}" role="checkbox" aria-checked="${!!loaded[p]}" tabindex="0">
         <span class="tick">${loaded[p]?"✓":""}</span><span class="name" style="flex:1">${esc(p)}</span><span class="qty">${totals[p]}</span></div>`).join("")}
     </div>
 
-    <h2>Out for delivery</h2>
-    ${!textMode ? `<button class="primary wide" id="startText" style="min-height:56px">💬 ${useWA() ? "WhatsApp" : "Text"} everyone I'm on my way (${withPhone.length})</button>
-      ${sentCount ? `<p class="small muted" style="margin:6px 4px">${sentCount} of ${withPhone.length} messages opened today.</p>` : ""}` : `
-      <div class="card">
-        <p class="small muted" style="margin:0 0 8px">Tap each customer to open a message, press Send in ${useWA() ? "WhatsApp" : "Messages"}, then come back for the next one. Each customer gets their own message.</p>
-        ${withPhone.map(o => `<div class="text-row ${texted[o.id]?"done":""}">
-          <span class="tick">${texted[o.id]?"✓":""}</span>
-          <span class="who">${esc(o.name)}<br><span class="small muted">${esc(o.phone)}</span></span>
-          <a class="btn ${texted[o.id]?"ghost":"primary"}" href="${smsHref(o)}" data-text="${o.id}">${texted[o.id]?"Again":msgLabel()}</a></div>`).join("")}
-        ${list.length > withPhone.length ? `<p class="small muted" style="margin:8px 0 0">${list.length-withPhone.length} customer(s) have no phone number.</p>` : ""}
-        <button class="ghost wide" id="endText" style="margin-top:10px">Done</button>
-      </div>`}
+    <h2>Messages</h2>
+    ${msgPanel || `<div style="display:grid;gap:8px">
+      <button class="ghost wide" data-msg="remind">📅 Send delivery reminders (${sentCount("remind")}/${withPhone.length})</button>
+      <button class="primary wide" data-msg="onway" style="min-height:56px">🚐 ${msgApp()} everyone I'm on my way (${sentCount("onway")}/${withPhone.length})</button>
+    </div>`}
 
-    <h2>Stops · ${list.filter(o=>o.delivered).length}/${list.length} delivered</h2>
-    ${list.map(o => `
+    <h2>Route</h2>
+    ${legs.length ? `<div style="display:grid;gap:8px">${legs.map(l => `<a class="btn primary" href="${l.url}" target="_blank" rel="noopener">🗺️ Open route in Google Maps${legs.length>1?` (stops ${l.from}–${l.to})`:""}</a>`).join("")}</div>
+      <p class="small muted" style="margin:6px 4px 0">Starts from where you are, in the stop order below. Delivered stops are left out.${legs.length>1?" Google allows 10 stops per route, so open the next part when you finish the first.":""}</p>`
+      : `<p class="small muted" style="margin:0 4px">All stops delivered.</p>`}
+    <button class="ghost wide" id="toggleReorder" style="margin-top:8px">${reorderMode ? "✓ Finished changing order" : "↕︎ Change stop order"}</button>
+
+    <h2>Stops</h2>
+    ${list.map((o, idx) => { const tot = orderTotal(o); return `
       <div class="card stop ${o.delivered?"delivered":""}">
-        <h3>${esc(o.name)} ${o.delivered?`<span class="badge">Delivered</span>`:""}</h3>
+        <div class="stop-head">
+          <div style="flex:1">
+            <h3><span class="num">${idx+1}</span>${esc(o.name)}</h3>
+            ${o.delivered?`<span class="badge">Delivered</span>`:""}${o.paid?`<span class="badge">Paid · ${PAY[o.payMethod]||"Paid"}</span>`:(tot?`<span class="badge owe">Not paid</span>`:"")}
+          </div>
+          ${reorderMode ? `<div class="reorder">
+              <button class="ghost" data-move="-1" data-id="${o.id}" aria-label="Move ${esc(o.name)} earlier" ${idx===0?"disabled":""}>▲</button>
+              <button class="ghost" data-move="1" data-id="${o.id}" aria-label="Move ${esc(o.name)} later" ${idx===list.length-1?"disabled":""}>▼</button></div>`
+            : `<button class="ghost edit-link" data-edit="${o.id}">Edit</button>`}
+        </div>
         <div class="addr muted">${esc(o.address)}${o.postcode?`<br><strong style="color:var(--ink)">${esc(o.postcode)}</strong>`:""}</div>
-        <ul>${o.items.map(i => `<li><strong>${i.qty}×</strong> ${esc(i.name)}</li>`).join("")}</ul>
-        ${o.notes ? `<p class="small" style="margin:0 0 8px">📝 ${esc(o.notes)}</p>` : ""}
-        ${o.phone ? `<p class="small muted" style="margin:0 0 6px">${esc(o.phone)}</p>` : ""}
+        ${reorderMode ? "" : `
+        <ul>${o.items.map(i => `<li><strong>${i.qty}×</strong> ${esc(i.name)}${i.price?` <span class="muted small">${money(i.price*i.qty)}</span>`:""}</li>`).join("")}</ul>
+        ${tot ? `<p class="amount ${owes(o)?"owe":""}">${owes(o) ? money(tot) + " to collect" : money(tot) + " · paid"}</p>` : ""}
+        ${o.notes ? `<p class="small" style="margin:0 0 6px">📝 ${esc(o.notes)}</p>` : ""}
+        ${o.phone ? `<p class="small muted" style="margin:0">${esc(o.phone)}</p>` : ""}
         <div class="actions">
-          ${o.phone ? `<a class="btn" href="tel:${cleanPhone(o.phone)}">📞 Call</a><a class="btn" href="${smsHref(o)}">💬 ${msgLabel()}</a>` : `<span></span><span></span>`}
-          <a class="btn" href="${mapsHref(o)}" target="_blank" rel="noopener">🗺️ Maps</a>
+          ${o.phone ? `<a class="btn" href="tel:${cleanPhone(o.phone)}">📞 Call</a><a class="btn" href="${msgHref(o,"onway")}" ${msgTarget()}>💬 ${msgApp()}</a>` : `<span></span><span></span>`}
+          <a class="btn" href="https://maps.apple.com/?q=${encodeURIComponent(fullAddress(o))}" target="_blank" rel="noopener">🗺️ Maps</a>
         </div>
-        <div class="actions" style="grid-template-columns:2fr 1fr">
-          <button class="${o.delivered?"ghost":"primary"}" data-deliver="${o.id}">${o.delivered?"Undo delivered":"✓ Delivered"}</button>
-          <button class="ghost" data-edit="${o.id}">Edit</button>
-        </div>
-      </div>`).join("")}
+        <div class="actions">
+          <button class="${o.delivered?"ghost":"primary"}" data-deliver="${o.id}">${o.delivered?"Undo":"✓ Delivered"}</button>
+          ${owes(o) ? `<button class="money" data-paid="${o.id}">£ Paid</button>` : (o.paid && tot ? `<button class="ghost" data-unpaid="${o.id}">Unpay</button>` : `<span></span>`)}
+          ${o.delivered ? `<span></span>` : `<button class="danger" data-notin="${o.id}">Not in</button>`}
+        </div>`}
+      </div>`; }).join("")}
     `}`;
 
-  $("#dayChips").addEventListener("click", e => { const b = e.target.closest("[data-date]"); if(b){ viewDate = b.dataset.date; textMode=false; renderDeliveries(); } });
-  $("#pickDay").addEventListener("change", e => { if(e.target.value){ viewDate = e.target.value; textMode=false; renderDeliveries(); } });
+  const app = $("#app");
+  $("#dayChips").addEventListener("click", e => { const b = e.target.closest("[data-date]"); if(b){ viewDate = b.dataset.date; msgMode = null; renderDeliveries(); } });
+  $("#pickDay").addEventListener("change", e => { if(e.target.value){ viewDate = e.target.value; msgMode = null; renderDeliveries(); } });
   const gb = $("#goBackup"); if(gb) gb.addEventListener("click", e => { e.preventDefault(); setTab("settings"); });
   const van = $("#vanList");
   if(van){
-    const toggle = el => {
-      const p = el.dataset.p;
-      db.loaded[viewDate] = db.loaded[viewDate] || {};
-      db.loaded[viewDate][p] = !db.loaded[viewDate][p]; save(); buzz(); renderDeliveries();
-    };
+    const toggle = el => { const p = el.dataset.p; (db.loaded[viewDate] = db.loaded[viewDate] || {})[p] = !loaded[p]; save(); buzz(); renderDeliveries(); };
     van.addEventListener("click", e => { const el = e.target.closest("[data-p]"); if(el) toggle(el); });
     van.addEventListener("keydown", e => { const el = e.target.closest("[data-p]"); if(el && (e.key===" "||e.key==="Enter")){ e.preventDefault(); toggle(el); } });
   }
-  const st = $("#startText"); if(st) st.addEventListener("click", () => { textMode = true; renderDeliveries(); });
-  const et = $("#endText"); if(et) et.addEventListener("click", () => { textMode = false; renderDeliveries(); });
-  app.querySelectorAll("[data-text]").forEach(a => a.addEventListener("click", () => {
-    db.texted[viewDate] = db.texted[viewDate] || {};
-    db.texted[viewDate][a.dataset.text] = true; save();
+  app.querySelectorAll("[data-msg]").forEach(b => b.addEventListener("click", () => { msgMode = b.dataset.msg; renderDeliveries(); }));
+  const em = $("#endMsg"); if(em) em.addEventListener("click", () => { msgMode = null; renderDeliveries(); });
+  app.querySelectorAll("[data-sent]").forEach(a => a.addEventListener("click", () => {
+    (db.sent[viewDate] = db.sent[viewDate] || {})[msgMode + ":" + a.dataset.sent] = true; save();
     setTimeout(renderDeliveries, 400);
   }));
+  const tr = $("#toggleReorder"); if(tr) tr.addEventListener("click", () => { reorderMode = !reorderMode; renderDeliveries(); });
+  app.querySelectorAll("[data-move]").forEach(b => b.addEventListener("click", () => {
+    const ids = list.map(o => o.id), i = ids.indexOf(b.dataset.id), j = i + +b.dataset.move;
+    if(j < 0 || j >= ids.length) return;
+    [ids[i], ids[j]] = [ids[j], ids[i]];
+    db.routes[viewDate] = ids; save(); renderDeliveries();
+  }));
+  app.querySelectorAll("[data-edit]").forEach(b => b.addEventListener("click", () => startEdit(b.dataset.edit)));
+  const find = id => db.orders.find(o => o.id === id);
+  const askPay = (o, then) => choiceSheet(`How did ${o.name} pay ${money(orderTotal(o))}?`,
+    [{label:"Cash", value:"cash", cls:"money"}, {label:"Card", value:"card", cls:"money"}, {label:"Transfer", value:"transfer", cls:"money"}, ...(then ? [{label:"Still not paid", value:"none"}] : [])],
+    v => { if(v !== "none"){ o.paid = true; o.payMethod = v; } then && then(); save(); buzz(); renderDeliveries(); });
   app.querySelectorAll("[data-deliver]").forEach(b => b.addEventListener("click", () => {
-    const o = db.orders.find(o => o.id === b.dataset.deliver);
-    o.delivered = !o.delivered; save(); buzz(); renderDeliveries();
+    const o = find(b.dataset.deliver);
+    if(!o.delivered && owes(o)) askPay(o, () => { o.delivered = true; });
+    else { o.delivered = !o.delivered; save(); buzz(); renderDeliveries(); }
   }));
-  app.querySelectorAll("[data-edit]").forEach(b => b.addEventListener("click", () => {
-    const o = db.orders.find(o => o.id === b.dataset.edit);
-    editingId = o.id;
-    form = {name:o.name, phone:o.phone, address:o.address, postcode:o.postcode, date:o.date,
-            items:o.items.map(i=>({...i})), notes:o.notes||"", lastItems:null};
-    setTab("new");
+  app.querySelectorAll("[data-paid]").forEach(b => b.addEventListener("click", () => askPay(find(b.dataset.paid))));
+  app.querySelectorAll("[data-unpaid]").forEach(b => b.addEventListener("click", () => {
+    const o = find(b.dataset.unpaid); o.paid = false; o.payMethod = "none"; save(); renderDeliveries();
   }));
+  app.querySelectorAll("[data-notin]").forEach(b => b.addEventListener("click", () => moveOrder(find(b.dataset.notin))));
+}
+
+function moveOrder(o){
+  const opts = [];
+  for(let i=1;i<=8;i++){ const d = addDays(today(), i); if(d !== o.date) opts.push(d); }
+  sheet(`<p><strong>${esc(o.name)} wasn't in.</strong><br>Move their order to:</p>
+    <div class="chips" style="flex-wrap:wrap">${opts.map(d => `<button class="chip" data-to="${d}">${shortDay(d)}<small>${dayMonth(d)}</small></button>`).join("")}</div>
+    <label for="moveDate">Or another date</label>
+    <input type="date" id="moveDate">
+    <div class="row" style="margin-top:14px"><button class="ghost" data-close>Cancel</button><button class="primary" data-go>Move</button></div>`,
+    (e, close, bg) => {
+      const chip = e.target.closest("[data-to]");
+      let to = chip ? chip.dataset.to : (e.target.closest("[data-go]") ? $("#moveDate", bg).value : null);
+      if(!to) return;
+      const note = `Not in on ${fromIso(o.date).toLocaleDateString("en-GB",{weekday:"short", day:"numeric", month:"short"})}`;
+      o.notes = o.notes ? o.notes + " · " + note : note;
+      o.date = to; o.delivered = false; save(); close();
+      toast(`${o.name} moved to ${niceDate(to)}`); renderDeliveries();
+    });
+}
+
+/* ================= ORDERS (search) ================= */
+function renderOrders(){
+  const t = today();
+  $("#app").innerHTML = `
+    ${storageBanner()}
+    <h1>Orders</h1>
+    <input id="q" type="search" placeholder="Search name, phone, postcode or product" value="${esc(ordersQuery)}" aria-label="Search orders">
+    <div class="seg" style="grid-template-columns:repeat(3,1fr);margin:10px 0" id="ordFilter">
+      ${[["upcoming","Upcoming"],["unpaid","Unpaid"],["all","All"]].map(([k,v]) => `<button class="chip ${ordersFilter===k?"on":""}" data-f="${k}">${v}</button>`).join("")}
+    </div>
+    <div id="results"></div>`;
+  const draw = () => {
+    const q = ordersQuery.trim().toLowerCase(), qd = q.replace(/\s/g,"");
+    let list = db.orders.filter(o => ordersFilter === "all" ? true : ordersFilter === "unpaid" ? owes(o) : (o.date >= t && !o.delivered));
+    if(q) list = list.filter(o => o.name.toLowerCase().includes(q) || (o.postcode||"").toLowerCase().replace(/\s/g,"").includes(qd)
+      || (qd.length > 2 && cleanPhone(o.phone).includes(qd)) || (o.address||"").toLowerCase().includes(q)
+      || o.items.some(i => i.name.toLowerCase().includes(q)));
+    list.sort((a,b) => ordersFilter === "upcoming" ? a.date.localeCompare(b.date) : b.date.localeCompare(a.date));
+    const owed = list.filter(owes).reduce((s,o)=>s+orderTotal(o),0);
+    $("#results").innerHTML = !list.length ? `<div class="empty">No orders found.</div>` :
+      `${ordersFilter === "unpaid" ? `<p class="amount owe" style="margin:0 4px 10px">${money(owed)} owed in total</p>` : ""}
+       <p class="small muted" style="margin:0 4px 8px">${list.length} order${list.length===1?"":"s"}${list.length>150?" – showing the first 150":""}</p>` +
+      list.slice(0,150).map(o => { const tot = orderTotal(o); return `<button class="result" data-open="${o.id}">
+        <span class="top"><span>${esc(o.name)}</span><span>${tot?money(tot):""}</span></span>
+        <span class="small muted">${esc(niceDate(o.date))}${o.postcode?" · "+esc(o.postcode):""}</span>
+        <span class="small">${esc(o.items.map(i=>i.qty+"× "+i.name).join(", "))}</span>
+        <span>${o.delivered?`<span class="badge" style="margin:4px 4px 0 0">Delivered</span>`:""}${o.paid?`<span class="badge" style="margin:4px 0 0">Paid · ${PAY[o.payMethod]||""}</span>`:(tot?`<span class="badge owe" style="margin:4px 0 0">Not paid</span>`:"")}</span>
+      </button>`; }).join("");
+  };
+  draw();
+  $("#q").addEventListener("input", e => { ordersQuery = e.target.value; draw(); });
+  $("#ordFilter").addEventListener("click", e => { const b = e.target.closest("[data-f]"); if(b){ ordersFilter = b.dataset.f; renderOrders(); } });
+  $("#results").addEventListener("click", e => { const b = e.target.closest("[data-open]"); if(b) startEdit(b.dataset.open); });
 }
 
 /* ================= SETTINGS ================= */
 function renderSettings(){
-  const app = $("#app");
-  const sample = {name:"Sarah Jones"};
-  app.innerHTML = `
+  const sample = {name:"Sarah Jones", date:addDays(today(),1), items:[{name:"x", qty:1, price:1500}], paid:false};
+  $("#app").innerHTML = `
     ${storageBanner()}
     <h1>Settings</h1>
 
-    <h2>Your business</h2>
+    <h2>Messages</h2>
     <div class="card">
-      <label for="s-business">Business name (used in messages)</label>
+      <label for="s-business">Business name</label>
       <input id="s-business" value="${esc(db.settings.business)}" placeholder="e.g. Zain's Deliveries">
-      <label>Send "on my way" messages by</label>
+      <label>Send messages by</label>
       <div class="row" id="s-via">
-        <button type="button" class="chip ${useWA()?"on":""}" data-via="whatsapp" style="flex:1">WhatsApp</button>
-        <button type="button" class="chip ${!useWA()?"on":""}" data-via="sms" style="flex:1">Text message</button>
+        <button type="button" class="chip ${useWA()?"on":""}" data-via="whatsapp">WhatsApp</button>
+        <button type="button" class="chip ${!useWA()?"on":""}" data-via="sms">Text message</button>
       </div>
-      <p class="small muted" style="margin:6px 2px 0">${useWA() ? "UK numbers starting 07 are converted automatically. A customer without WhatsApp will get a 'not on WhatsApp' notice – call or text them instead." : ""}</p>
+      ${useWA() ? `<p class="small muted" style="margin:6px 2px 0">UK numbers starting 07 are converted automatically. If a customer isn't on WhatsApp, WhatsApp will tell you – call them instead.</p>` : ""}
+      <label for="s-remind">Reminder (send the day before)</label>
+      <textarea id="s-remind" rows="3">${esc(db.settings.reminder)}</textarea>
+      <p class="small" style="margin:6px 2px 0"><strong>Preview:</strong> <span id="prev-remind"></span></p>
       <label for="s-message">"On my way" message</label>
       <textarea id="s-message" rows="3">${esc(db.settings.message)}</textarea>
-      <p class="small muted" style="margin:6px 2px 0">{name} becomes the customer's first name, {business} your business name.</p>
-      <p class="small" style="margin:10px 2px 0"><strong>Preview:</strong> <span id="preview"></span></p>
+      <p class="small" style="margin:6px 2px 0"><strong>Preview:</strong> <span id="prev-onway"></span></p>
+      <p class="small muted" style="margin:10px 2px 0">You can use {name} (first name), {business}, {date} (delivery day) and {total} (amount to pay).</p>
     </div>
 
-    <h2>Products (${db.products.length})</h2>
+    <h2>Products &amp; prices (${db.products.length})</h2>
     <div class="card">
-      <p class="small muted" style="margin:0 0 8px">New products are added here automatically when you save an order. Removing one only stops it being suggested; old orders keep it.</p>
-      ${db.products.length ? db.products.map((p,i) => `<div class="prod-row"><span>${esc(p)}</span><button class="x" data-del="${i}" aria-label="Remove ${esc(p)}">×</button></div>`).join("") : `<p class="muted small" style="margin:0">None yet – they'll appear as you take orders.</p>`}
+      <p class="small muted" style="margin:0 0 8px">Products and prices are added automatically when you save orders. Changing a price here only affects new orders.</p>
+      ${db.products.length ? db.products.map((p,i) => `<div class="prod-row"><span>${esc(p)}</span>
+        <div class="price-wrap"><span>£</span><input inputmode="decimal" data-price="${i}" value="${penceInput(db.prices[p])}" aria-label="Price of ${esc(p)}"></div>
+        <button class="x" data-del="${i}" aria-label="Remove ${esc(p)}">×</button></div>`).join("")
+        : `<p class="muted small" style="margin:0">None yet – they'll appear as you take orders.</p>`}
     </div>
 
     <h2>Backup</h2>
@@ -584,22 +836,34 @@ function renderSettings(){
     <h2>Tidy up</h2>
     <div class="card">
       <p class="small muted" style="margin:0 0 10px">${db.orders.length} orders stored in total.</p>
-      <button class="ghost wide" id="clearOld">Delete delivered orders older than 3 months</button>
+      <button class="ghost wide" id="clearOld">Delete delivered, paid orders older than 3 months</button>
     </div>
-    <p class="small muted" style="text-align:center;margin-top:20px">Everything stays on this phone. Nothing is sent anywhere.</p>`;
+    <p class="small muted" style="text-align:center;margin-top:20px">Your orders stay on this phone. The only thing sent anywhere is a postcode, to check it's real when you type it.</p>`;
 
-  const prev = () => $("#preview").textContent = messageFor(sample);
+  const prev = () => {
+    $("#prev-remind").textContent = messageFor(sample, "remind");
+    $("#prev-onway").textContent = messageFor(sample, "onway");
+  };
   prev();
   $("#s-business").addEventListener("input", e => { db.settings.business = e.target.value; save(); prev(); });
   $("#s-message").addEventListener("input", e => { db.settings.message = e.target.value; save(); prev(); });
+  $("#s-remind").addEventListener("input", e => { db.settings.reminder = e.target.value; save(); prev(); });
   $("#s-via").addEventListener("click", e => { const b = e.target.closest("[data-via]"); if(!b) return; db.settings.via = b.dataset.via; save(); renderSettings(); });
-  app.querySelectorAll("[data-del]").forEach(b => b.addEventListener("click", () => {
+  document.querySelectorAll("[data-price]").forEach(inp => {
+    inp.addEventListener("change", () => {
+      const p = db.products[+inp.dataset.price]; const v = toPence(inp.value);
+      if(v) db.prices[p] = v; else delete db.prices[p];
+      inp.value = penceInput(v); save(); toast(`${p}: ${v ? money(v) : "no price"}`);
+    });
+  });
+  document.querySelectorAll("[data-del]").forEach(b => b.addEventListener("click", () => {
     const p = db.products[+b.dataset.del];
-    confirmSheet(`Stop suggesting "${p}"?`, "Remove", () => { db.products.splice(+b.dataset.del,1); save(); renderSettings(); });
+    confirmSheet(`Stop suggesting "${p}"? Old orders keep it.`, "Remove", () => {
+      db.products.splice(+b.dataset.del,1); delete db.prices[p]; save(); renderSettings();
+    });
   }));
   $("#backup").addEventListener("click", () => {
-    const data = JSON.stringify({...db, exportedAt:new Date().toISOString()}, null, 1);
-    const blob = new Blob([data], {type:"application/json"});
+    const blob = new Blob([JSON.stringify({...db, exportedAt:new Date().toISOString()}, null, 1)], {type:"application/json"});
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
     a.download = `deliveries-backup-${today()}.json`;
@@ -618,27 +882,26 @@ function renderSettings(){
       try{ data = JSON.parse(r.result); }catch(err){ toast("That file isn't a backup"); return; }
       if(!data || !Array.isArray(data.orders)){ toast("That file isn't a backup"); return; }
       confirmSheet(`Replace everything on this phone with the backup (${data.orders.length} orders)?`, "Replace", () => {
-        delete data.exportedAt;
-        db = Object.assign(blank(), data); save(); toast("Backup restored"); renderSettings();
+        delete data.exportedAt; db = upgrade(data); save(); toast("Backup restored"); renderSettings();
       });
     };
     r.readAsText(f);
   });
   $("#clearOld").addEventListener("click", () => {
     const cutoff = addDays(today(), -91);
-    const old = db.orders.filter(o => o.delivered && o.date < cutoff);
+    const old = db.orders.filter(o => o.delivered && !owes(o) && o.date < cutoff);
     if(!old.length){ toast("Nothing that old to delete"); return; }
     confirmSheet(`Delete ${old.length} delivered orders from before ${niceDate(cutoff)}? Back up first if you might want them.`, "Delete", () => {
       const ids = new Set(old.map(o=>o.id));
       db.orders = db.orders.filter(o => !ids.has(o.id));
-      Object.keys(db.loaded).forEach(d => { if(d < cutoff) delete db.loaded[d]; });
-      Object.keys(db.texted).forEach(d => { if(d < cutoff) delete db.texted[d]; });
+      ["loaded","sent","routes"].forEach(k => Object.keys(db[k]).forEach(d => { if(d < cutoff) delete db[k][d]; }));
       save(); toast("Old orders deleted"); renderSettings();
     });
   });
 }
 
-/* ---------- Start ---------- */
+/* ============ Start ============ */
+save();
 setTab(db.orders.some(o => o.date === today() && !o.delivered) ? "deliveries" : "new");
 </script>
 </body>
