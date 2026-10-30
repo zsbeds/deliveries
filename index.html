@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Deliveries</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Deliveries">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#f4f1ea" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#16181b" media="(prefers-color-scheme: dark)">
+<meta name="format-detection" content="telephone=no">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="icon" href="icon.png">
+<style>
+:root{
+  --bg:#f4f1ea; --card:#ffffff; --ink:#1d1f22; --muted:#6b6f76; --line:#e2ddd2;
+  --accent:#1f6f54; --accent-ink:#ffffff; --accent-soft:#dcefe6;
+  --warn:#b4471f; --warn-soft:#f8e3d9; --done:#8a8f96;
+  --radius:14px; --tap:48px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#16181b; --card:#212429; --ink:#eceef0; --muted:#9aa0a8; --line:#33373d;
+    --accent:#3fb489; --accent-ink:#0d1a14; --accent-soft:#1f3a30;
+    --warn:#f08a62; --warn-soft:#3d261d; --done:#6c7178;
+  }
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);
+  font:17px/1.4 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif}
+body{padding:env(safe-area-inset-top) 0 calc(76px + env(safe-area-inset-bottom))}
+main{max-width:640px;margin:0 auto;padding:12px 14px 24px}
+h1{font-size:28px;margin:8px 2px 14px;letter-spacing:-.02em}
+h2{font-size:15px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:22px 4px 8px;font-weight:600}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin-bottom:12px}
+label{display:block;font-size:14px;color:var(--muted);margin:12px 2px 5px;font-weight:600}
+input,textarea{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);
+  border-radius:10px;padding:11px 12px;min-height:var(--tap);outline:none;-webkit-appearance:none;appearance:none}
+textarea{resize:vertical;min-height:70px}
+input:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+button,.btn{font:inherit;font-weight:600;border:0;border-radius:12px;min-height:var(--tap);padding:0 16px;
+  background:var(--accent-soft);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;
+  justify-content:center;gap:6px;text-decoration:none;touch-action:manipulation}
+button:active,.btn:active{transform:scale(.98)}
+.primary{background:var(--accent);color:var(--accent-ink)}
+.danger{background:var(--warn-soft);color:var(--warn)}
+.ghost{background:transparent;border:1px solid var(--line)}
+.wide{width:100%}
+.row{display:flex;gap:8px;align-items:center}
+.row > *{flex:1}
+.muted{color:var(--muted)}
+.small{font-size:14px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 6px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;min-height:44px;padding:0 14px;border-radius:22px;background:var(--card);
+  border:1px solid var(--line);font-weight:600;font-size:15px;line-height:1.1;flex-direction:column}
+.chip small{font-weight:500;font-size:12px;color:var(--muted)}
+.chip.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.chip.on small{color:inherit;opacity:.85}
+.item-row{display:grid;grid-template-columns:1fr auto 40px;gap:8px;align-items:center;margin-bottom:8px}
+.stepper{display:flex;align-items:center;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--bg)}
+.stepper button{min-width:46px;border-radius:0;background:transparent;font-size:22px;padding:0}
+.stepper input{width:44px;min-height:46px;text-align:center;border:0;padding:0;background:transparent;font-weight:700}
+.stepper input:focus{box-shadow:none}
+.x{min-width:40px;padding:0;background:transparent;color:var(--muted);font-size:22px}
+.suggest{position:relative}
+.sugg-list{position:absolute;left:0;right:0;top:100%;z-index:20;background:var(--card);border:1px solid var(--line);
+  border-radius:12px;margin-top:4px;box-shadow:0 8px 24px rgba(0,0,0,.15);overflow:hidden;max-height:260px;overflow-y:auto}
+.sugg-list div{padding:12px 14px;border-bottom:1px solid var(--line);cursor:pointer}
+.sugg-list div:last-child{border-bottom:0}
+.sugg-list div:active{background:var(--accent-soft)}
+.sugg-list .sub{font-size:13px;color:var(--muted)}
+.total-line{display:flex;justify-content:space-between;margin-top:6px;color:var(--muted);font-size:15px}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--card);border-top:1px solid var(--line);
+  display:flex;padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
+nav.tabs button{flex:1;flex-direction:column;gap:2px;background:transparent;font-size:12px;color:var(--muted);min-height:54px;font-weight:600}
+nav.tabs button svg{width:26px;height:26px}
+nav.tabs button.on{color:var(--accent)}
+.load-item{display:flex;align-items:center;gap:12px;padding:10px 4px;border-bottom:1px solid var(--line);cursor:pointer;min-height:var(--tap)}
+.load-item:last-child{border-bottom:0}
+.qty{font-weight:800;font-size:22px;min-width:44px;text-align:right;font-variant-numeric:tabular-nums}
+.tick{width:30px;height:30px;border-radius:50%;border:2px solid var(--line);flex:0 0 auto;display:flex;align-items:center;justify-content:center}
+.load-item.done .tick,.text-row.done .tick{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.load-item.done .name,.load-item.done .qty{color:var(--done);text-decoration:line-through}
+.stop{position:relative}
+.stop.delivered{opacity:.6}
+.stop h3{margin:0 0 2px;font-size:19px}
+.stop .addr{margin:2px 0 8px}
+.stop ul{margin:6px 0 10px;padding-left:20px}
+.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px}
+.actions .btn,.actions button{padding:0 8px;font-size:15px}
+.badge{display:inline-block;font-size:12px;font-weight:700;padding:3px 8px;border-radius:20px;background:var(--accent-soft);color:var(--accent);vertical-align:middle}
+.text-row{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--line)}
+.text-row:last-child{border-bottom:0}
+.text-row .who{flex:1}
+.text-row.done .who{color:var(--done)}
+.banner{background:var(--warn-soft);color:var(--warn);border-radius:12px;padding:12px 14px;margin-bottom:12px;font-size:15px}
+.empty{text-align:center;color:var(--muted);padding:28px 10px}
+.toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);
+  background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:24px;font-weight:600;opacity:0;transition:.25s;z-index:50;
+  max-width:90vw;text-align:center;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.sheet-bg{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:60;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--card);width:100%;max-width:640px;border-radius:18px 18px 0 0;padding:20px 16px calc(16px + env(safe-area-inset-bottom))}
+.sheet p{margin:0 0 16px}
+.prod-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line)}
+.prod-row:last-child{border-bottom:0}
+.hidden{display:none !important}
+.editing-bar{background:var(--accent-soft);border-radius:12px;padding:10px 14px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+</style>
+</head>
+<body>
+<main id="app"></main>
+
+<nav class="tabs" id="tabs">
+  <button data-tab="new" aria-label="New order">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>New order</button>
+  <button data-tab="deliveries" aria-label="Deliveries">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg>Deliveries</button>
+  <button data-tab="settings" aria-label="Settings">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg>Settings</button>
+</nav>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+/* ---------- Storage (all data stays in this phone's browser) ---------- */
+const KEY = "delivery-logger-v1";
+const DEFAULT_MSG = "Hi {name}, I'm out for delivery today and will be with you soon. Thanks, {business}";
+let storageOK = true;
+function blank(){ return {v:1, orders:[], products:[], settings:{business:"", message:DEFAULT_MSG}, loaded:{}, texted:{}, lastBackup:null}; }
+function load(){
+  try{
+    const raw = localStorage.getItem(KEY);
+    if(!raw) return blank();
+    return Object.assign(blank(), JSON.parse(raw));
+  }catch(e){ storageOK = false; return blank(); }
+}
+let db = load();
+function save(){
+  try{ localStorage.setItem(KEY, JSON.stringify(db)); storageOK = true; }
+  catch(e){ storageOK = false; }
+}
+try{ navigator.storage && navigator.storage.persist && navigator.storage.persist(); }catch(e){}
+
+/* ---------- Helpers ---------- */
+const $ = (s, el=document) => el.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+const pad = n => String(n).padStart(2,"0");
+const iso = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const fromIso = s => { const [y,m,d] = s.split("-").map(Number); return new Date(y, m-1, d); };
+const today = () => iso(new Date());
+function addDays(s, n){ const d = fromIso(s); d.setDate(d.getDate()+n); return iso(d); }
+function niceDate(s, long){
+  const t = today();
+  const base = fromIso(s).toLocaleDateString("en-GB", long ? {weekday:"long", day:"numeric", month:"long"} : {weekday:"short", day:"numeric", month:"short"});
+  if(s === t) return "Today · " + base;
+  if(s === addDays(t,1)) return "Tomorrow · " + base;
+  return base;
+}
+const cleanPhone = p => String(p||"").replace(/[^\d+]/g, "");
+const normPostcode = p => String(p||"").toUpperCase().replace(/\s+/g," ").trim();
+function toast(msg){
+  const t = $("#toast"); t.textContent = msg; t.classList.add("show");
+  clearTimeout(toast._t); toast._t = setTimeout(()=>t.classList.remove("show"), 2200);
+}
+function buzz(){ try{ navigator.vibrate && navigator.vibrate(30); }catch(e){} }
+function confirmSheet(message, okLabel, onOk, danger=true){
+  const bg = document.createElement("div");
+  bg.className = "sheet-bg";
+  bg.innerHTML = `<div class="sheet" role="dialog" aria-modal="true"><p>${esc(message)}</p>
+    <div class="row"><button class="ghost" data-a="no">Cancel</button><button class="${danger?"danger":"primary"}" data-a="yes">${esc(okLabel)}</button></div></div>`;
+  bg.addEventListener("click", e => {
+    const a = e.target.dataset.a;
+    if(e.target === bg || a === "no") bg.remove();
+    if(a === "yes"){ bg.remove(); onOk(); }
+  });
+  document.body.appendChild(bg);
+}
+
+/* ---------- Catalogue: grows automatically from orders ---------- */
+function canonicalProduct(name){
+  const n = name.trim().replace(/\s+/g," ");
+  if(!n) return "";
+  const hit = db.products.find(p => p.toLowerCase() === n.toLowerCase());
+  return hit || n;
+}
+function learnProducts(items){
+  items.forEach(it => {
+    if(!db.products.some(p => p.toLowerCase() === it.name.toLowerCase())) db.products.push(it.name);
+  });
+  db.products.sort((a,b)=>a.localeCompare(b));
+}
+
+/* ---------- Customers: remembered from past orders ---------- */
+function customers(){
+  const map = new Map();
+  [...db.orders].sort((a,b)=>a.createdAt - b.createdAt).forEach(o => {
+    const k = (cleanPhone(o.phone) || o.name.trim().toLowerCase());
+    map.set(k, {name:o.name, phone:o.phone, address:o.address, postcode:o.postcode, items:o.items, last:o.date});
+  });
+  return [...map.values()];
+}
+
+/* ---------- Generic suggestion dropdown ---------- */
+function attachSuggest(input, getOptions, onPick){
+  const wrap = input.parentElement;
+  let list = null;
+  function close(){ if(list){ list.remove(); list = null; } }
+  function open(){
+    close();
+    const q = input.value.trim().toLowerCase();
+    if(!q) return;
+    const opts = getOptions(q).slice(0,6);
+    if(!opts.length) return;
+    list = document.createElement("div");
+    list.className = "sugg-list";
+    opts.forEach(o => {
+      const d = document.createElement("div");
+      d.innerHTML = `<div>${esc(o.label)}</div>${o.sub ? `<div class="sub">${esc(o.sub)}</div>` : ""}`;
+      d.style.padding = "10px 14px";
+      d.addEventListener("pointerdown", e => { e.preventDefault(); close(); onPick(o); });
+      list.appendChild(d);
+    });
+    wrap.appendChild(list);
+  }
+  input.addEventListener("input", open);
+  input.addEventListener("focus", open);
+  input.addEventListener("blur", () => setTimeout(close, 150));
+}
+
+/* ---------- App state ---------- */
+let tab = "new";
+let viewDate = today();
+let form = null;        // order being typed
+let editingId = null;   // id when editing an existing order
+let textMode = false;   // "out for delivery" texting panel open
+
+function emptyForm(){
+  return {name:"", phone:"", address:"", postcode:"", date:nextDefaultDate(), items:[{name:"", qty:1}], notes:"", lastItems:null};
+}
+function nextDefaultDate(){ return addDays(today(), 1); }
+
+function setTab(t){
+  tab = t;
+  document.querySelectorAll("#tabs button").forEach(b => b.classList.toggle("on", b.dataset.tab === t));
+  render();
+  window.scrollTo(0,0);
+}
+document.querySelectorAll("#tabs button").forEach(b => b.addEventListener("click", () => setTab(b.dataset.tab)));
+
+function render(){
+  if(tab === "new") renderNew();
+  else if(tab === "deliveries") renderDeliveries();
+  else renderSettings();
+}
+function storageBanner(){
+  return storageOK ? "" : `<div class="banner">This browser isn't letting the app save. Orders will be lost when you close it. Open the app from Safari (not a private tab).</div>`;
+}
+
+/* ================= NEW ORDER ================= */
+function renderNew(){
+  if(!form) form = emptyForm();
+  const app = $("#app");
+  const dateChips = [];
+  for(let i=0;i<8;i++){
+    const d = addDays(today(), i);
+    const lab = i===0 ? "Today" : i===1 ? "Tomorrow" : fromIso(d).toLocaleDateString("en-GB",{weekday:"short"});
+    const sub = fromIso(d).toLocaleDateString("en-GB",{day:"numeric", month:"short"});
+    dateChips.push(`<button type="button" class="chip ${form.date===d?"on":""}" data-date="${d}">${lab}<small>${sub}</small></button>`);
+  }
+  app.innerHTML = `
+    ${storageBanner()}
+    <h1>${editingId ? "Edit order" : "New order"}</h1>
+    ${editingId ? `<div class="editing-bar"><span class="small">Changing an existing order</span><button type="button" class="ghost" id="cancelEdit" style="min-height:40px">Cancel</button></div>` : ""}
+    <form id="orderForm" autocomplete="off" novalidate>
+      <div class="card">
+        <label for="f-name">Customer name</label>
+        <div class="suggest"><input id="f-name" value="${esc(form.name)}" autocapitalize="words" placeholder="Start typing – regulars pop up"></div>
+        <label for="f-phone">Phone</label>
+        <input id="f-phone" type="tel" inputmode="tel" value="${esc(form.phone)}" placeholder="07…">
+        <label for="f-address">Address</label>
+        <textarea id="f-address" rows="2" autocapitalize="words" placeholder="House number and street">${esc(form.address)}</textarea>
+        <label for="f-postcode">Postcode</label>
+        <input id="f-postcode" value="${esc(form.postcode)}" autocapitalize="characters" placeholder="e.g. B12 9AB">
+      </div>
+
+      <h2>Delivery date</h2>
+      <div class="chips" id="dateChips">${dateChips.join("")}</div>
+      <div class="row" style="margin-top:4px"><input type="date" id="f-date" value="${form.date}" aria-label="Pick another date"></div>
+
+      <h2>Products</h2>
+      <div class="card">
+        ${form.lastItems ? `<button type="button" class="ghost wide" id="sameAsLast" style="margin-bottom:12px">↻ Same as last time (${esc(form.lastItems.map(i=>i.qty+"× "+i.name).join(", "))})</button>` : ""}
+        <div id="items"></div>
+        <button type="button" class="ghost wide" id="addItem">+ Add another product</button>
+        <div class="total-line"><span>Items</span><strong id="itemCount"></strong></div>
+      </div>
+
+      <label for="f-notes">Notes (optional)</label>
+      <textarea id="f-notes" rows="2" placeholder="e.g. leave by back door">${esc(form.notes)}</textarea>
+
+      <div style="margin-top:18px;display:grid;gap:10px">
+        <button type="submit" class="primary wide" style="min-height:56px;font-size:19px">${editingId ? "Save changes" : "Save order"}</button>
+        ${editingId ? `<button type="button" class="danger wide" id="deleteOrder">Delete this order</button>` : ""}
+      </div>
+    </form>`;
+
+  renderItems();
+
+  // field bindings
+  const bind = (id, key, fn) => $(id).addEventListener("input", e => { form[key] = fn ? fn(e.target.value) : e.target.value; });
+  bind("#f-name","name"); bind("#f-phone","phone"); bind("#f-address","address"); bind("#f-postcode","postcode"); bind("#f-notes","notes");
+  $("#f-postcode").addEventListener("blur", e => { form.postcode = normPostcode(e.target.value); e.target.value = form.postcode; });
+  $("#f-date").addEventListener("change", e => { if(e.target.value){ form.date = e.target.value; renderNew(); } });
+  $("#dateChips").addEventListener("click", e => {
+    const b = e.target.closest("[data-date]"); if(!b) return;
+    form.date = b.dataset.date; renderNew();
+  });
+
+  attachSuggest($("#f-name"), q => customers()
+      .filter(c => c.name.toLowerCase().includes(q) || cleanPhone(c.phone).includes(q.replace(/\s/g,"")))
+      .map(c => ({label:c.name, sub:[c.address, c.postcode].filter(Boolean).join(", "), c})),
+    o => {
+      const c = o.c;
+      Object.assign(form, {name:c.name, phone:c.phone, address:c.address, postcode:c.postcode, lastItems:c.items});
+      renderNew();
+    });
+
+  $("#addItem").addEventListener("click", () => {
+    form.items.push({name:"", qty:1}); renderItems();
+    const inputs = document.querySelectorAll(".item-name"); inputs[inputs.length-1].focus();
+  });
+  const same = $("#sameAsLast");
+  if(same) same.addEventListener("click", () => { form.items = form.lastItems.map(i => ({...i})); renderItems(); toast("Products copied from last order"); });
+  const ce = $("#cancelEdit");
+  if(ce) ce.addEventListener("click", () => { editingId = null; form = emptyForm(); setTab("deliveries"); });
+  const del = $("#deleteOrder");
+  if(del) del.addEventListener("click", () => confirmSheet(`Delete ${form.name || "this"}'s order? This can't be undone.`, "Delete", () => {
+    db.orders = db.orders.filter(o => o.id !== editingId); save();
+    editingId = null; form = emptyForm(); toast("Order deleted"); setTab("deliveries");
+  }));
+  $("#orderForm").addEventListener("submit", e => { e.preventDefault(); saveOrder(); });
+}
+
+function renderItems(){
+  const box = $("#items");
+  box.innerHTML = form.items.map((it, i) => `
+    <div class="item-row" data-i="${i}">
+      <div class="suggest"><input class="item-name" value="${esc(it.name)}" placeholder="Product" aria-label="Product ${i+1}" autocapitalize="sentences"></div>
+      <div class="stepper">
+        <button type="button" data-step="-1" aria-label="One fewer">−</button>
+        <input class="item-qty" type="number" inputmode="numeric" min="1" value="${it.qty}" aria-label="Quantity">
+        <button type="button" data-step="1" aria-label="One more">+</button>
+      </div>
+      <button type="button" class="x" data-remove aria-label="Remove product">×</button>
+    </div>`).join("");
+  box.querySelectorAll(".item-row").forEach(row => {
+    const i = +row.dataset.i;
+    const nameIn = $(".item-name", row), qtyIn = $(".item-qty", row);
+    nameIn.addEventListener("input", () => { form.items[i].name = nameIn.value; });
+    qtyIn.addEventListener("input", () => { form.items[i].qty = Math.max(0, parseInt(qtyIn.value,10) || 0); updateCount(); });
+    row.querySelectorAll("[data-step]").forEach(b => b.addEventListener("click", () => {
+      form.items[i].qty = Math.max(1, (form.items[i].qty||0) + +b.dataset.step);
+      qtyIn.value = form.items[i].qty; updateCount();
+    }));
+    $("[data-remove]", row).addEventListener("click", () => {
+      form.items.splice(i,1); if(!form.items.length) form.items.push({name:"", qty:1}); renderItems();
+    });
+    attachSuggest(nameIn,
+      q => db.products.filter(p => p.toLowerCase().includes(q) && p.toLowerCase() !== q).map(p => ({label:p})),
+      o => { form.items[i].name = o.label; nameIn.value = o.label; qtyIn.focus(); qtyIn.select(); });
+  });
+  updateCount();
+}
+function updateCount(){
+  const n = form.items.filter(i => i.name.trim()).reduce((s,i)=>s+(i.qty||0),0);
+  const el = $("#itemCount"); if(el) el.textContent = n;
+}
+
+function saveOrder(){
+  const name = form.name.trim();
+  const items = form.items
+    .map(i => ({name: canonicalProduct(i.name), qty: parseInt(i.qty,10) || 0}))
+    .filter(i => i.name && i.qty > 0);
+  // merge duplicate product lines
+  const merged = [];
+  items.forEach(i => { const m = merged.find(x => x.name === i.name); m ? m.qty += i.qty : merged.push({...i}); });
+  if(!name){ toast("Add the customer's name"); $("#f-name").focus(); return; }
+  if(!merged.length){ toast("Add at least one product"); return; }
+  if(!form.date){ toast("Pick a delivery date"); return; }
+
+  learnProducts(merged);
+  const data = {name, phone:form.phone.trim(), address:form.address.trim(), postcode:normPostcode(form.postcode),
+    date:form.date, items:merged, notes:form.notes.trim()};
+  if(editingId){
+    const o = db.orders.find(o => o.id === editingId);
+    Object.assign(o, data);
+    toast(`Updated – ${name}`);
+  }else{
+    db.orders.push({id:uid(), ...data, delivered:false, createdAt:Date.now()});
+    toast(`Saved – ${name}, ${niceDate(form.date)}`);
+  }
+  save(); buzz();
+  const wasEditing = editingId;
+  editingId = null; form = emptyForm();
+  if(wasEditing){ viewDate = data.date; setTab("deliveries"); } else { renderNew(); window.scrollTo(0,0); }
+}
+
+/* ================= DELIVERIES ================= */
+function ordersOn(d){
+  return db.orders.filter(o => o.date === d).sort((a,b) =>
+    (a.postcode||"").localeCompare(b.postcode||"") || a.name.localeCompare(b.name));
+}
+function messageFor(o){
+  return (db.settings.message || DEFAULT_MSG)
+    .replaceAll("{name}", o.name.split(" ")[0])
+    .replaceAll("{business}", db.settings.business || "")
+    .replace(/,\s*$/, "").trim();
+}
+const smsHref = (o) => `sms:${cleanPhone(o.phone)}?&body=${encodeURIComponent(messageFor(o))}`;
+const mapsHref = (o) => `https://maps.apple.com/?q=${encodeURIComponent([o.address, o.postcode].filter(Boolean).join(", "))}`;
+
+function renderDeliveries(){
+  const app = $("#app");
+  const t = today();
+  // upcoming dates that have orders, plus today
+  const dates = [...new Set([t, ...db.orders.filter(o => o.date >= t && !o.delivered || o.date === viewDate).map(o => o.date)])].sort();
+  if(!dates.includes(viewDate)) dates.push(viewDate), dates.sort();
+  const chips = dates.map(d => {
+    const n = db.orders.filter(o => o.date === d).length;
+    const lab = d===t ? "Today" : d===addDays(t,1) ? "Tomorrow" : fromIso(d).toLocaleDateString("en-GB",{weekday:"short"});
+    return `<button class="chip ${d===viewDate?"on":""}" data-date="${d}">${lab}<small>${fromIso(d).toLocaleDateString("en-GB",{day:"numeric",month:"short"})} · ${n}</small></button>`;
+  }).join("");
+
+  const list = ordersOn(viewDate);
+  const loaded = db.loaded[viewDate] || {};
+  const texted = db.texted[viewDate] || {};
+  // van list
+  const totals = {};
+  list.forEach(o => o.items.forEach(i => totals[i.name] = (totals[i.name]||0) + i.qty));
+  const prodNames = Object.keys(totals).sort((a,b)=>a.localeCompare(b));
+  const loadedCount = prodNames.filter(p => loaded[p]).length;
+  const needBackup = db.orders.length >= 5 && (!db.lastBackup || Date.now() - db.lastBackup > 7*864e5);
+  const withPhone = list.filter(o => cleanPhone(o.phone));
+  const sentCount = withPhone.filter(o => texted[o.id]).length;
+
+  app.innerHTML = `
+    ${storageBanner()}
+    ${needBackup ? `<div class="banner">It's been a while since your last backup. <a href="#" id="goBackup" style="color:inherit;font-weight:700">Back up now</a></div>` : ""}
+    <h1>Deliveries</h1>
+    <div class="chips" id="dayChips">${chips}</div>
+    <div class="row" style="margin:4px 0 6px"><input type="date" id="pickDay" value="${viewDate}" aria-label="Pick a day"></div>
+
+    ${!list.length ? `<div class="empty">No orders for ${esc(niceDate(viewDate, true))}.</div>` : `
+    <h2>Load the van · ${loadedCount}/${prodNames.length}</h2>
+    <div class="card" id="vanList" style="padding:4px 12px">
+      ${prodNames.map(p => `<div class="load-item ${loaded[p]?"done":""}" data-p="${esc(p)}" role="checkbox" aria-checked="${!!loaded[p]}" tabindex="0">
+        <span class="tick">${loaded[p]?"✓":""}</span><span class="name" style="flex:1">${esc(p)}</span><span class="qty">${totals[p]}</span></div>`).join("")}
+    </div>
+
+    <h2>Out for delivery</h2>
+    ${!textMode ? `<button class="primary wide" id="startText" style="min-height:56px">💬 Text everyone I'm on my way (${withPhone.length})</button>
+      ${sentCount ? `<p class="small muted" style="margin:6px 4px">${sentCount} of ${withPhone.length} messages opened today.</p>` : ""}` : `
+      <div class="card">
+        <p class="small muted" style="margin:0 0 8px">Tap each customer to open a message, press Send in Messages, then come back for the next one. Each customer gets their own text.</p>
+        ${withPhone.map(o => `<div class="text-row ${texted[o.id]?"done":""}">
+          <span class="tick">${texted[o.id]?"✓":""}</span>
+          <span class="who">${esc(o.name)}<br><span class="small muted">${esc(o.phone)}</span></span>
+          <a class="btn ${texted[o.id]?"ghost":"primary"}" href="${smsHref(o)}" data-text="${o.id}">${texted[o.id]?"Again":"Text"}</a></div>`).join("")}
+        ${list.length > withPhone.length ? `<p class="small muted" style="margin:8px 0 0">${list.length-withPhone.length} customer(s) have no phone number.</p>` : ""}
+        <button class="ghost wide" id="endText" style="margin-top:10px">Done</button>
+      </div>`}
+
+    <h2>Stops · ${list.filter(o=>o.delivered).length}/${list.length} delivered</h2>
+    ${list.map(o => `
+      <div class="card stop ${o.delivered?"delivered":""}">
+        <h3>${esc(o.name)} ${o.delivered?`<span class="badge">Delivered</span>`:""}</h3>
+        <div class="addr muted">${esc(o.address)}${o.postcode?`<br><strong style="color:var(--ink)">${esc(o.postcode)}</strong>`:""}</div>
+        <ul>${o.items.map(i => `<li><strong>${i.qty}×</strong> ${esc(i.name)}</li>`).join("")}</ul>
+        ${o.notes ? `<p class="small" style="margin:0 0 8px">📝 ${esc(o.notes)}</p>` : ""}
+        ${o.phone ? `<p class="small muted" style="margin:0 0 6px">${esc(o.phone)}</p>` : ""}
+        <div class="actions">
+          ${o.phone ? `<a class="btn" href="tel:${cleanPhone(o.phone)}">📞 Call</a><a class="btn" href="${smsHref(o)}">💬 Text</a>` : `<span></span><span></span>`}
+          <a class="btn" href="${mapsHref(o)}" target="_blank" rel="noopener">🗺️ Maps</a>
+        </div>
+        <div class="actions" style="grid-template-columns:2fr 1fr">
+          <button class="${o.delivered?"ghost":"primary"}" data-deliver="${o.id}">${o.delivered?"Undo delivered":"✓ Delivered"}</button>
+          <button class="ghost" data-edit="${o.id}">Edit</button>
+        </div>
+      </div>`).join("")}
+    `}`;
+
+  $("#dayChips").addEventListener("click", e => { const b = e.target.closest("[data-date]"); if(b){ viewDate = b.dataset.date; textMode=false; renderDeliveries(); } });
+  $("#pickDay").addEventListener("change", e => { if(e.target.value){ viewDate = e.target.value; textMode=false; renderDeliveries(); } });
+  const gb = $("#goBackup"); if(gb) gb.addEventListener("click", e => { e.preventDefault(); setTab("settings"); });
+  const van = $("#vanList");
+  if(van){
+    const toggle = el => {
+      const p = el.dataset.p;
+      db.loaded[viewDate] = db.loaded[viewDate] || {};
+      db.loaded[viewDate][p] = !db.loaded[viewDate][p]; save(); buzz(); renderDeliveries();
+    };
+    van.addEventListener("click", e => { const el = e.target.closest("[data-p]"); if(el) toggle(el); });
+    van.addEventListener("keydown", e => { const el = e.target.closest("[data-p]"); if(el && (e.key===" "||e.key==="Enter")){ e.preventDefault(); toggle(el); } });
+  }
+  const st = $("#startText"); if(st) st.addEventListener("click", () => { textMode = true; renderDeliveries(); });
+  const et = $("#endText"); if(et) et.addEventListener("click", () => { textMode = false; renderDeliveries(); });
+  app.querySelectorAll("[data-text]").forEach(a => a.addEventListener("click", () => {
+    db.texted[viewDate] = db.texted[viewDate] || {};
+    db.texted[viewDate][a.dataset.text] = true; save();
+    setTimeout(renderDeliveries, 400);
+  }));
+  app.querySelectorAll("[data-deliver]").forEach(b => b.addEventListener("click", () => {
+    const o = db.orders.find(o => o.id === b.dataset.deliver);
+    o.delivered = !o.delivered; save(); buzz(); renderDeliveries();
+  }));
+  app.querySelectorAll("[data-edit]").forEach(b => b.addEventListener("click", () => {
+    const o = db.orders.find(o => o.id === b.dataset.edit);
+    editingId = o.id;
+    form = {name:o.name, phone:o.phone, address:o.address, postcode:o.postcode, date:o.date,
+            items:o.items.map(i=>({...i})), notes:o.notes||"", lastItems:null};
+    setTab("new");
+  }));
+}
+
+/* ================= SETTINGS ================= */
+function renderSettings(){
+  const app = $("#app");
+  const sample = {name:"Sarah Jones"};
+  app.innerHTML = `
+    ${storageBanner()}
+    <h1>Settings</h1>
+
+    <h2>Your business</h2>
+    <div class="card">
+      <label for="s-business">Business name (used in texts)</label>
+      <input id="s-business" value="${esc(db.settings.business)}" placeholder="e.g. Zain's Deliveries">
+      <label for="s-message">"On my way" text</label>
+      <textarea id="s-message" rows="3">${esc(db.settings.message)}</textarea>
+      <p class="small muted" style="margin:6px 2px 0">{name} becomes the customer's first name, {business} your business name.</p>
+      <p class="small" style="margin:10px 2px 0"><strong>Preview:</strong> <span id="preview"></span></p>
+    </div>
+
+    <h2>Products (${db.products.length})</h2>
+    <div class="card">
+      <p class="small muted" style="margin:0 0 8px">New products are added here automatically when you save an order. Removing one only stops it being suggested; old orders keep it.</p>
+      ${db.products.length ? db.products.map((p,i) => `<div class="prod-row"><span>${esc(p)}</span><button class="x" data-del="${i}" aria-label="Remove ${esc(p)}">×</button></div>`).join("") : `<p class="muted small" style="margin:0">None yet – they'll appear as you take orders.</p>`}
+    </div>
+
+    <h2>Backup</h2>
+    <div class="card">
+      <p class="small muted" style="margin:0 0 10px">Your orders are stored only on this phone. Save a backup to Files every week or so, in case the phone is lost or reset.
+        ${db.lastBackup ? `<br>Last backup: ${new Date(db.lastBackup).toLocaleString("en-GB",{dateStyle:"medium", timeStyle:"short"})}` : "<br>No backup yet."}</p>
+      <div style="display:grid;gap:10px">
+        <button class="primary" id="backup">Save backup file</button>
+        <button class="ghost" id="restoreBtn">Restore from a backup file</button>
+        <input type="file" id="restoreFile" accept=".json,application/json" class="hidden">
+      </div>
+    </div>
+
+    <h2>Tidy up</h2>
+    <div class="card">
+      <p class="small muted" style="margin:0 0 10px">${db.orders.length} orders stored in total.</p>
+      <button class="ghost wide" id="clearOld">Delete delivered orders older than 3 months</button>
+    </div>
+    <p class="small muted" style="text-align:center;margin-top:20px">Everything stays on this phone. Nothing is sent anywhere.</p>`;
+
+  const prev = () => $("#preview").textContent = messageFor(sample);
+  prev();
+  $("#s-business").addEventListener("input", e => { db.settings.business = e.target.value; save(); prev(); });
+  $("#s-message").addEventListener("input", e => { db.settings.message = e.target.value; save(); prev(); });
+  app.querySelectorAll("[data-del]").forEach(b => b.addEventListener("click", () => {
+    const p = db.products[+b.dataset.del];
+    confirmSheet(`Stop suggesting "${p}"?`, "Remove", () => { db.products.splice(+b.dataset.del,1); save(); renderSettings(); });
+  }));
+  $("#backup").addEventListener("click", () => {
+    const data = JSON.stringify({...db, exportedAt:new Date().toISOString()}, null, 1);
+    const blob = new Blob([data], {type:"application/json"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `deliveries-backup-${today()}.json`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    db.lastBackup = Date.now(); save();
+    toast("Backup created – save it to Files");
+    setTimeout(renderSettings, 500);
+  });
+  $("#restoreBtn").addEventListener("click", () => $("#restoreFile").click());
+  $("#restoreFile").addEventListener("change", e => {
+    const f = e.target.files[0]; if(!f) return;
+    const r = new FileReader();
+    r.onload = () => {
+      let data;
+      try{ data = JSON.parse(r.result); }catch(err){ toast("That file isn't a backup"); return; }
+      if(!data || !Array.isArray(data.orders)){ toast("That file isn't a backup"); return; }
+      confirmSheet(`Replace everything on this phone with the backup (${data.orders.length} orders)?`, "Replace", () => {
+        delete data.exportedAt;
+        db = Object.assign(blank(), data); save(); toast("Backup restored"); renderSettings();
+      });
+    };
+    r.readAsText(f);
+  });
+  $("#clearOld").addEventListener("click", () => {
+    const cutoff = addDays(today(), -91);
+    const old = db.orders.filter(o => o.delivered && o.date < cutoff);
+    if(!old.length){ toast("Nothing that old to delete"); return; }
+    confirmSheet(`Delete ${old.length} delivered orders from before ${niceDate(cutoff)}? Back up first if you might want them.`, "Delete", () => {
+      const ids = new Set(old.map(o=>o.id));
+      db.orders = db.orders.filter(o => !ids.has(o.id));
+      Object.keys(db.loaded).forEach(d => { if(d < cutoff) delete db.loaded[d]; });
+      Object.keys(db.texted).forEach(d => { if(d < cutoff) delete db.texted[d]; });
+      save(); toast("Old orders deleted"); renderSettings();
+    });
+  });
+}
+
+/* ---------- Start ---------- */
+setTab(db.orders.some(o => o.date === today() && !o.delivered) ? "deliveries" : "new");
+</script>
+</body>
+</html>
