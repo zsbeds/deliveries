@@ -130,12 +130,14 @@ nav.tabs button.on{color:var(--accent)}
 const KEY = "delivery-logger-v1";
 const DEFAULT_MSG = "Hi {name}, I'm out for delivery today and will be with you soon. Thanks, {business}";
 let storageOK = true;
-function blank(){ return {v:1, orders:[], products:[], settings:{business:"", message:DEFAULT_MSG}, loaded:{}, texted:{}, lastBackup:null}; }
+function blank(){ return {v:1, orders:[], products:[], settings:{business:"", message:DEFAULT_MSG, via:"whatsapp"}, loaded:{}, texted:{}, lastBackup:null}; }
 function load(){
   try{
     const raw = localStorage.getItem(KEY);
     if(!raw) return blank();
-    return Object.assign(blank(), JSON.parse(raw));
+    const d = Object.assign(blank(), JSON.parse(raw));
+    d.settings = Object.assign(blank().settings, d.settings);
+    return d;
   }catch(e){ storageOK = false; return blank(); }
 }
 let db = load();
@@ -421,7 +423,18 @@ function messageFor(o){
     .replaceAll("{business}", db.settings.business || "")
     .replace(/,\s*$/, "").trim();
 }
-const smsHref = (o) => `sms:${cleanPhone(o.phone)}?&body=${encodeURIComponent(messageFor(o))}`;
+function waNumber(p){
+  let n = cleanPhone(p);
+  if(n.startsWith("+")) n = n.slice(1);
+  else if(n.startsWith("00")) n = n.slice(2);
+  else if(n.startsWith("0")) n = "44" + n.slice(1);   // UK number like 07700 900123
+  return n.replace(/\D/g,"");
+}
+const useWA = () => db.settings.via !== "sms";
+const smsHref = (o) => useWA()
+  ? `https://wa.me/${waNumber(o.phone)}?text=${encodeURIComponent(messageFor(o))}`
+  : `sms:${cleanPhone(o.phone)}?&body=${encodeURIComponent(messageFor(o))}`;
+const msgLabel = () => useWA() ? "WhatsApp" : "Text";
 const mapsHref = (o) => `https://maps.apple.com/?q=${encodeURIComponent([o.address, o.postcode].filter(Boolean).join(", "))}`;
 
 function renderDeliveries(){
@@ -463,14 +476,14 @@ function renderDeliveries(){
     </div>
 
     <h2>Out for delivery</h2>
-    ${!textMode ? `<button class="primary wide" id="startText" style="min-height:56px">💬 Text everyone I'm on my way (${withPhone.length})</button>
+    ${!textMode ? `<button class="primary wide" id="startText" style="min-height:56px">💬 ${useWA() ? "WhatsApp" : "Text"} everyone I'm on my way (${withPhone.length})</button>
       ${sentCount ? `<p class="small muted" style="margin:6px 4px">${sentCount} of ${withPhone.length} messages opened today.</p>` : ""}` : `
       <div class="card">
-        <p class="small muted" style="margin:0 0 8px">Tap each customer to open a message, press Send in Messages, then come back for the next one. Each customer gets their own text.</p>
+        <p class="small muted" style="margin:0 0 8px">Tap each customer to open a message, press Send in ${useWA() ? "WhatsApp" : "Messages"}, then come back for the next one. Each customer gets their own message.</p>
         ${withPhone.map(o => `<div class="text-row ${texted[o.id]?"done":""}">
           <span class="tick">${texted[o.id]?"✓":""}</span>
           <span class="who">${esc(o.name)}<br><span class="small muted">${esc(o.phone)}</span></span>
-          <a class="btn ${texted[o.id]?"ghost":"primary"}" href="${smsHref(o)}" data-text="${o.id}">${texted[o.id]?"Again":"Text"}</a></div>`).join("")}
+          <a class="btn ${texted[o.id]?"ghost":"primary"}" href="${smsHref(o)}" data-text="${o.id}">${texted[o.id]?"Again":msgLabel()}</a></div>`).join("")}
         ${list.length > withPhone.length ? `<p class="small muted" style="margin:8px 0 0">${list.length-withPhone.length} customer(s) have no phone number.</p>` : ""}
         <button class="ghost wide" id="endText" style="margin-top:10px">Done</button>
       </div>`}
@@ -484,7 +497,7 @@ function renderDeliveries(){
         ${o.notes ? `<p class="small" style="margin:0 0 8px">📝 ${esc(o.notes)}</p>` : ""}
         ${o.phone ? `<p class="small muted" style="margin:0 0 6px">${esc(o.phone)}</p>` : ""}
         <div class="actions">
-          ${o.phone ? `<a class="btn" href="tel:${cleanPhone(o.phone)}">📞 Call</a><a class="btn" href="${smsHref(o)}">💬 Text</a>` : `<span></span><span></span>`}
+          ${o.phone ? `<a class="btn" href="tel:${cleanPhone(o.phone)}">📞 Call</a><a class="btn" href="${smsHref(o)}">💬 ${msgLabel()}</a>` : `<span></span><span></span>`}
           <a class="btn" href="${mapsHref(o)}" target="_blank" rel="noopener">🗺️ Maps</a>
         </div>
         <div class="actions" style="grid-template-columns:2fr 1fr">
@@ -537,9 +550,15 @@ function renderSettings(){
 
     <h2>Your business</h2>
     <div class="card">
-      <label for="s-business">Business name (used in texts)</label>
+      <label for="s-business">Business name (used in messages)</label>
       <input id="s-business" value="${esc(db.settings.business)}" placeholder="e.g. Zain's Deliveries">
-      <label for="s-message">"On my way" text</label>
+      <label>Send "on my way" messages by</label>
+      <div class="row" id="s-via">
+        <button type="button" class="chip ${useWA()?"on":""}" data-via="whatsapp" style="flex:1">WhatsApp</button>
+        <button type="button" class="chip ${!useWA()?"on":""}" data-via="sms" style="flex:1">Text message</button>
+      </div>
+      <p class="small muted" style="margin:6px 2px 0">${useWA() ? "UK numbers starting 07 are converted automatically. A customer without WhatsApp will get a 'not on WhatsApp' notice – call or text them instead." : ""}</p>
+      <label for="s-message">"On my way" message</label>
       <textarea id="s-message" rows="3">${esc(db.settings.message)}</textarea>
       <p class="small muted" style="margin:6px 2px 0">{name} becomes the customer's first name, {business} your business name.</p>
       <p class="small" style="margin:10px 2px 0"><strong>Preview:</strong> <span id="preview"></span></p>
@@ -573,6 +592,7 @@ function renderSettings(){
   prev();
   $("#s-business").addEventListener("input", e => { db.settings.business = e.target.value; save(); prev(); });
   $("#s-message").addEventListener("input", e => { db.settings.message = e.target.value; save(); prev(); });
+  $("#s-via").addEventListener("click", e => { const b = e.target.closest("[data-via]"); if(!b) return; db.settings.via = b.dataset.via; save(); renderSettings(); });
   app.querySelectorAll("[data-del]").forEach(b => b.addEventListener("click", () => {
     const p = db.products[+b.dataset.del];
     confirmSheet(`Stop suggesting "${p}"?`, "Remove", () => { db.products.splice(+b.dataset.del,1); save(); renderSettings(); });
